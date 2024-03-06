@@ -1,0 +1,14 @@
+Content-Security-Policy,False
+access-control-allow-origin,False
+Referrer-Policy,False
+Clear-Site-Data,False
+Strict-Transport-Security,False
+x-content-security-policy,True
+x-webkit-csp,True
+Public-Key-Pins,True
+X-XSS-Protection,True
+X-Frame-Options,False
+X-Content-Type-Options,False
+X-Download-Options,False
+Cache-Control,False
+X-Permitted-Cross-Domain-Policies,False
