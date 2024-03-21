@@ -16,6 +16,16 @@ export default function Home() {
     { name: "Website 8", pdfLink: "link8.pdf", date: "2023-02-25" },
     { name: "Website 9", pdfLink: "link9.pdf", date: "2023-03-15" },
     { name: "Website 10", pdfLink: "link10.pdf", date: "2023-02-18" },
+    { name: "Website 1", pdfLink: "link1.pdf", date: "2023-03-01" },
+    { name: "Website 2", pdfLink: "link2.pdf", date: "2023-02-15" },
+    { name: "Website 3", pdfLink: "link3.pdf", date: "2023-02-28" },
+    { name: "Website 4", pdfLink: "link4.pdf", date: "2023-03-05" },
+    { name: "Website 5", pdfLink: "link5.pdf", date: "2023-02-20" },
+    { name: "Website 6", pdfLink: "link6.pdf", date: "2023-03-02" },
+    { name: "Website 7", pdfLink: "link7.pdf", date: "2023-03-10" },
+    { name: "Website 8", pdfLink: "link8.pdf", date: "2023-02-25" },
+    { name: "Website 9", pdfLink: "link9.pdf", date: "2023-03-15" },
+    { name: "Website 10", pdfLink: "link10.pdf", date: "2023-02-18" },
   ];
   return (
     <html>
@@ -56,8 +66,9 @@ export default function Home() {
 
           <div className="info-container">
             <div className="graph">
-              <h1>BURADA GRAPH</h1>
+              <h1>GRAPH</h1>
             </div>
+
             <div className="card">
               <h6>Total scans:</h6>
               <h3 className="carddata">12</h3>

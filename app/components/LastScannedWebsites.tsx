@@ -15,13 +15,15 @@ interface LastScannedWebsitesProps {
 const LastScannedWebsites: React.FC<LastScannedWebsitesProps> = ({
   lastScannedWebsites,
 }) => {
-  const lastFiveScans = lastScannedWebsites.slice(5);
+  const reversedData = lastScannedWebsites.reverse();
+  const lastFourElements = reversedData.slice(0, 4);
+
   return (
     <div className="history">
       <h2 className="title">Last Scanned Websites</h2>
       <div className="last-scanned-container">
         <div className="last-scanned-list">
-          {lastFiveScans.map(({ name, pdfLink, date }, index) => (
+          {lastFourElements.map(({ name, pdfLink, date }, index) => (
             <div key={index} className="last-scanned-item">
               <span>{name}</span>
               <span className="date">{date}</span>
