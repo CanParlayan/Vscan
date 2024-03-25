@@ -3,8 +3,7 @@ import React from 'react';
 
 export default function scan(){
     return(
-
-
+        
         <html>
             <body>
 
@@ -34,6 +33,7 @@ export default function scan(){
 
             <div className="scan-container">
                 <input className="urlpaste" type="text" id="urlInput" placeholder="Enter URL"></input>
+                
                 <button className='scanbutton'>Start Scan</button>
             </div>
 
@@ -42,6 +42,17 @@ export default function scan(){
 
 
             </body>
+            <script>
+            const startScan = async () => {
+            const url = document.getElementById('urlInput').value;
+            try {
+                const response = await axios.post('http://localhost:5000/start-scan', { url });
+                console.log(response.data); // Handle response data
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+            </script>
         </html>
     )
 }

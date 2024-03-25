@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { performScans } = require('./your_script');
+const { performScans } = require('./scanner.py');
 
 const app = express();
 const port = 5000;
