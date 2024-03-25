@@ -1,6 +1,5 @@
 import React from "react";
 import "./homestyle.css";
-import "@fortawesome/fontawesome-free/css/all.min.css";
 import LastScannedWebsites from "./components/LastScannedWebsites";
 import "./components/LastScannedWebsitescss.css";
 

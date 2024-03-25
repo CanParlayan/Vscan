@@ -1,7 +1,5 @@
 // components/LastScannedWebsites.tsx
 import React from "react";
-import "@fortawesome/fontawesome-free/css/all.min.css";
-
 interface Website {
   date: String;
   name: string;
