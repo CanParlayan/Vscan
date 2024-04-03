@@ -1,5 +1,5 @@
 .history {
-  background: #a4adca50;
+  background: #ffffff;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -10,6 +10,7 @@
   font-size: 1.5rem;
   color: #333;
   margin-bottom: 10px;
+  border-bottom: #202c2d;
 }
 
 .last-scanned-item {
@@ -33,11 +34,11 @@
 
 .date {
   font-style: italic;
-  color: #666;
+  color: #202c2d;
 }
 
 .pdf-link {
-  color: #2c3a48;
+  color: #202c2d;
   text-decoration: none;
   font-weight: bold;
 }

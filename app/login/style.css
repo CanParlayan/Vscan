@@ -1,0 +1,51 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+body {
+  background-image: url(https://as2.ftcdn.net/jpg/01/06/86/99/500_F_106869944_y35PG3Po2nWEuU49iKZx8DdC7cN7dEoR.jpg);
+}
+.loginBox {
+  width: 400px;
+
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.formGroup {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  background: #ffffff;
+  color: #202c2d;
+  padding: 20px;
+  border-radius: 8px;
+  border: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.2s ease-out, box-shadow 0.2s ease;
+}
+
+.button:hover {
+  color: #fff;
+  background-color: #000000;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
+}

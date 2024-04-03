@@ -1,7 +1,9 @@
 import React from "react";
 import "./homestyle.css";
 import LastScannedWebsites from "./components/LastScannedWebsites";
+import Logo from "./components/logo";
 import "./components/LastScannedWebsitescss.css";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function Home() {
   const lastScannedWebsites = [
@@ -26,19 +28,12 @@ export default function Home() {
     { name: "Website 9", pdfLink: "link9.pdf", date: "2023-03-15" },
     { name: "Website 10", pdfLink: "link10.pdf", date: "2023-02-18" },
   ];
+
   return (
     <html>
       <body>
-        <nav className="navBar">
-          <div className="logo">SCANNER</div>
-          <div className="nav-content">
-            <i className="fa-regular fa-moon"></i>
-            &nbsp; &nbsp; &nbsp;
-            <i className="fa-solid fa-user"></i>
-          </div>
-        </nav>
-
         <nav className="sidebar">
+          <Logo />
           <ul>
             <li>
               <a href="/">
@@ -55,13 +50,16 @@ export default function Home() {
                 <i className="fas fa-history"></i> History
               </a>
             </li>
+            <li className="bottompart">
+              <a className="" href="login">
+                <i className="fas fa-sign-in-alt"></i> Login
+              </a>
+            </li>
           </ul>
         </nav>
 
         <div className="main-content">
-          <h1 className="main-text">
-            This is a website vulnerability scanner.
-          </h1>
+          <h1 className="main-text">Welcome back Bülent! </h1>
 
           <div className="info-container">
             <div className="graph">

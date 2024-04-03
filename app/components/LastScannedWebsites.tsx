@@ -1,4 +1,3 @@
-// components/LastScannedWebsites.tsx
 import React from "react";
 interface Website {
   date: String;
