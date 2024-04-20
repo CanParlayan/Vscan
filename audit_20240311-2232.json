@@ -9,7 +9,7 @@
     "[Recommendation] header access-control-allow-origin not found, consider implementing it! \n",
     "[Recommendation] header Referrer-Policy not found, consider implementing it! \n",
     "[Recommendation] header Clear-Site-Data not found, consider implementing it! \n",
-    "[Recommendation] header Strict-Transport-Security not found, consider implementing it! \n",
+    "[Recommenvdation] header Strict-Transport-Security not found, consider implementing it! \n",
     "[Recommendation] header x-content-security-policy not found, consider implementing it! \n",
     "[Recommendation] header x-webkit-csp not found, consider implementing it! \n",
     "[Recommendation] header Public-Key-Pins not found, consider implementing it! \n",

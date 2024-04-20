@@ -1,9 +1,7 @@
 import React from "react";
 import "./homestyle.css";
 import LastScannedWebsites from "./components/LastScannedWebsites";
-import Logo from "./components/logo";
 import "./components/LastScannedWebsitescss.css";
-import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function Home() {
   const lastScannedWebsites = [
@@ -28,57 +26,61 @@ export default function Home() {
     { name: "Website 9", pdfLink: "link9.pdf", date: "2023-03-15" },
     { name: "Website 10", pdfLink: "link10.pdf", date: "2023-02-18" },
   ];
-
   return (
-    <html>
+      <html>
       <body>
-        <nav className="sidebar">
-          <Logo />
-          <ul>
-            <li>
-              <a href="/">
-                <i className="fas fa-chart-bar"></i> Dashboard
-              </a>
-            </li>
-            <li>
-              <a href="scan">
-                <i className="fas fa-search"></i> Scan
-              </a>
-            </li>
-            <li>
-              <a href="history">
-                <i className="fas fa-history"></i> History
-              </a>
-            </li>
-            <li className="bottompart">
-              <a className="" href="login">
-                <i className="fas fa-sign-in-alt"></i> Login
-              </a>
-            </li>
-          </ul>
-        </nav>
+      <nav className="navBar">
+        <div className="logo">SCANNER</div>
+        <div className="nav-content">
+          <i className="fa-regular fa-moon"></i>
+          &nbsp; &nbsp; &nbsp;
+          <i className="fa-solid fa-user"></i>
+        </div>
+      </nav>
 
-        <div className="main-content">
-          <h1 className="main-text">Welcome back Bülent! </h1>
+      <nav className="sidebar">
+        <ul>
+          <li>
+            <a href="/">
+              <i className="fas fa-chart-bar"></i> Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="scan">
+              <i className="fas fa-search"></i> Scan
+            </a>
+          </li>
+          <li>
+            <a href="history">
+              <i className="fas fa-history"></i> History
+            </a>
+          </li>
+        </ul>
+      </nav>
 
-          <div className="info-container">
-            <div className="graph">
-              <h1>GRAPH</h1>
-            </div>
+      <div className="main-content">
+        <h1 className="main-text">
+          This is a website vulnerability scanner.
+        </h1>
 
-            <div className="card">
-              <h6>Total scans:</h6>
-              <h3 className="carddata">12</h3>
-            </div>
-            <div className="card">
-              <h6>Total Vulnerabilities:</h6>
-              <h3 className="carddata">8</h3>
-            </div>
+        <div className="info-container">
+          <div className="graph">
+            <h1>GRAPH</h1>
           </div>
 
-          <LastScannedWebsites lastScannedWebsites={lastScannedWebsites} />
+          <div className="card">
+            <h6>Total scans:</h6>
+            <h3 className="carddata">12</h3>
+          </div>
+          <div className="card">
+            <h6>Total Vulnerabilities:</h6>
+            <h3 className="carddata">8</h3>
+          </div>
         </div>
+
+        <LastScannedWebsites lastScannedWebsites={lastScannedWebsites} />
+      </div>
       </body>
-    </html>
+      </html>
   );
 }
