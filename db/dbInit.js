@@ -1,160 +1,90 @@
-const sqlite3 = require('sqlite3').verbose();
-
-let db = new sqlite3.Database('./db.db', (err) => {
-    if (err) {
-        console.error(err.message);
-    }
-    console.log('Connected to the SQLite database.');
+const mysql = require('mysql');
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root', 
+    password: 'Hard.reach.ces?77', 
+    database: 'vulscan_database'
 });
 
-const sqlCommands = `
-CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE,
-    password TEXT
-);
-
-CREATE TABLE table_info (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    site_url TEXT,
-    timestamp TEXT,
-    has_sqli INTEGER,
-    has_header INTEGER,
-    has_xss INTEGER,
-    has_outdated INTEGER,
-    user_id INTEGER,  -- Add user_id column
-    FOREIGN KEY (user_id) REFERENCES users(id)  -- Reference the user table
-);
-
-CREATE TABLE header_recommendations (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    table_info_id INTEGER,
-    recommendation TEXT,
-    header_name TEXT,
-    FOREIGN KEY (table_info_id) REFERENCES table_info(id)
-);
-
-CREATE TABLE xss_details (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    table_info_id INTEGER,
-    vulnerability_type TEXT,
-    form_action TEXT,
-    form_inputs TEXT,
-    form_method TEXT,
-    FOREIGN KEY (table_info_id) REFERENCES table_info(id)
-);
-CREATE TABLE sqli_details (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    table_info_id INTEGER,
-    vulnerability_type TEXT,
-    form_action TEXT,
-    form_inputs TEXT,
-    form_method TEXT,
-    FOREIGN KEY (table_info_id) REFERENCES table_info(id)
-);
-
-CREATE TABLE outdated_details (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    table_info_id INTEGER,
-    vulnerability_type TEXT,
-    component TEXT,
-    version TEXT,
-    CVE TEXT,
-    up_to_date_version TEXT,  -- Corrected column name
-    FOREIGN KEY (table_info_id) REFERENCES table_info(id)
-);
-`;
-
-
-db.serialize(() => {
-    db.run(
-        `CREATE TABLE users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT UNIQUE,
-      password TEXT
-    );`,
-        (err) => {
-            if (err) throw err;
-        }
-    );
-
-    db.run(
-        `CREATE TABLE table_info (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      site_url TEXT,
-      timestamp TEXT,
-      has_sqli INTEGER,
-      has_header INTEGER,
-      has_xss INTEGER,
-      has_outdated INTEGER,
-      user_id INTEGER,  -- Add user_id column
-      FOREIGN KEY (user_id) REFERENCES users(id)  -- Reference the user table
-    );`,
-        (err) => {
-            if (err) throw err;
-        }
-    );
-    db.run(
-        `CREATE TABLE header_recommendations (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      table_info_id INTEGER,
-      recommendation TEXT,
-      header_name TEXT,
-      FOREIGN KEY (table_info_id) REFERENCES table_info(id)
-    );`,
-        (err) => {
-            if (err) throw err;
-        }
-    );
-    db.run(
-        `CREATE TABLE xss_details (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      table_info_id INTEGER,
-      vulnerability_type TEXT,
-      form_action TEXT,
-      form_inputs TEXT,
-      form_method TEXT,
-      FOREIGN KEY (table_info_id) REFERENCES table_info(id)
-    );`,
-        (err) => {
-            if (err) throw err;
-        }
-    );
-    db.run(
-        `CREATE TABLE sqli_details (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      table_info_id INTEGER,
-      vulnerability_type TEXT,
-      form_action TEXT,
-      form_inputs TEXT,
-      form_method TEXT,
-      FOREIGN KEY (table_info_id) REFERENCES table_info(id)
-    );`,
-        (err) => {
-            if (err) throw err;
-        }
-    );
-    db.run(
-        `CREATE TABLE outdated_details (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      table_info_id INTEGER,
-      vulnerability_type TEXT,
-      component TEXT,
-      version TEXT,
-      CVE TEXT,
-      up_to_date_version TEXT,  -- Corrected column name
-      FOREIGN KEY (table_info_id) REFERENCES table_info(id)
-    );`,
-        (err) => {
-            if (err) throw err;
-        }
-    );
-}
-);
-
-db.close((err) => {
+db.connect((err) => {
     if (err) {
-        console.error(err.message);
+        console.error('MySQL bağlantısı başarısız:', err);
+        throw err;
     }
-    console.log('Close the database connection.');
+    console.log('MySQL veritabanına bağlanıldı.');
+
+    const sqlCommands = `
+    CREATE TABLE users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(255) UNIQUE,
+        password VARCHAR(255)
+    );
+
+    CREATE TABLE table_info (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        site_url VARCHAR(255),
+        timestamp VARCHAR(255),
+        has_sqli INT,
+        has_header INT,
+        has_xss INT,
+        has_outdated INT,
+        user_id INT,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+    CREATE TABLE header_recommendations (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        table_info_id INT,
+        recommendation TEXT,
+        header_name VARCHAR(255),
+        FOREIGN KEY (table_info_id) REFERENCES table_info(id)
+    );
+
+    CREATE TABLE xss_details (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        table_info_id INT,
+        vulnerability_type VARCHAR(255),
+        form_action VARCHAR(255),
+        form_inputs TEXT,
+        form_method VARCHAR(255),
+        FOREIGN KEY (table_info_id) REFERENCES table_info(id)
+    );
+
+    CREATE TABLE sqli_details (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        table_info_id INT,
+        vulnerability_type VARCHAR(255),
+        form_action VARCHAR(255),
+        form_inputs TEXT,
+        form_method VARCHAR(255),
+        FOREIGN KEY (table_info_id) REFERENCES table_info(id)
+    );
+
+    CREATE TABLE outdated_details (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        table_info_id INT,
+        vulnerability_type VARCHAR(255),
+        component TEXT,
+        version VARCHAR(255),
+        CVE VARCHAR(255),
+        up_to_date_version VARCHAR(255),
+        FOREIGN KEY (table_info_id) REFERENCES table_info(id)
+    );
+    `;
+
+    db.query(sqlCommands, (err, result) => {
+        if (err) {
+            console.error("SQL komutları çalıştırılırken hata oluştu:", err);
+            throw err;
+        }
+        console.log("SQL komutları başarıyla çalıştırıldı.");
+    });
+});
+
+db.end((err) => {
+    if (err) {
+        console.error('MySQL bağlantısı kapatılırken hata oluştu:', err);
+        throw err;
+    }
+    console.log('MySQL veritabanı bağlantısı kapatıldı.');
 });
