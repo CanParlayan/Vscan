@@ -1,0 +1,104 @@
+{
+  "site_url": "http://testphp.vulnweb.com",
+  "timestamp": "20240424-0007",
+  "audit_details": [
+    "\n[*****] Security headers returned by URL: http://testphp.vulnweb.com: [*****]\n\n",
+    "[Recommendation] header Content-Security-Policy not found, consider implementing it!\n",
+    "[Recommendation] header access-control-allow-origin not found, consider implementing it!\n",
+    "[Recommendation] header Referrer-Policy not found, consider implementing it!\n",
+    "[Recommendation] header Clear-Site-Data not found, consider implementing it!\n",
+    "[Recommendation] header Strict-Transport-Security not found, consider implementing it!\n",
+    "[Recommendation] header x-content-security-policy not found, consider implementing it!\n",
+    "[Recommendation] header x-webkit-csp not found, consider implementing it!\n",
+    "[Recommendation] header Public-Key-Pins not found, consider implementing it!\n",
+    "[Recommendation] header X-XSS-Protection not found, consider implementing it!\n",
+    "[Recommendation] header X-Frame-Options not found, consider implementing it!\n",
+    "[Recommendation] header X-Frame-Options not found or not properly configured, please implement security header!\n",
+    "[Recommendation] header X-Content-Type-Options not found, consider implementing it!\n",
+    "[Recommendation] header X-Content-Type-Options not found or not properly configured, please implement security header!\n",
+    "[Recommendation] header X-Download-Options not found, consider implementing it!\n",
+    "[Recommendation] File Download security is OFF, header X-Download-Options not found or not properly configured, please implement security header!\n",
+    "[Recommendation] header Cache-Control not found, consider implementing it!\n",
+    "[Recommendation] No content caching policy, header Cache-Control not found or not properly configured, please implement security header!\n",
+    "[Recommendation] header X-Permitted-Cross-Domain-Policies not found, consider implementing it!\n",
+    "X-Permitted-Cross-Domain-Policies header not found or not properly configured, please implement security header!\n",
+    "[Recommendation] header Strict-Transport-Security not found, consider implementing it!\n",
+    "[Alert] Possible clickjacking vulnerability detected.\n",
+    {
+      "URL": "http://testphp.vulnweb.com/listproducts.php?O=OR+1%3D1&R=OR+1%3D1&+=OR+1%3D1&1=OR+1%3D1&%3D=OR+1%3D1&1=OR+1%3D1",
+      "Payload": "OR 1=1",
+      "Type": "Error-Based Injection",
+      "SQL": [
+        true,
+        "MySQL"
+      ]
+    },
+    {
+      "URL": "http://testphp.vulnweb.com/listproducts.php?O=OR+1%3D1&R=OR+1%3D1&+=OR+1%3D1&1=OR+1%3D1&%3D=OR+1%3D1&1=OR+1%3D1",
+      "Payload": "OR 1=1",
+      "Type": "Error-Based Injection",
+      "SQL": [
+        true,
+        "MySQL"
+      ]
+    },
+    {
+      "URL": "http://testphp.vulnweb.com/artists.php?O=OR+1%3D1&R=OR+1%3D1&+=OR+1%3D1&1=OR+1%3D1&%3D=OR+1%3D1&1=OR+1%3D1",
+      "Payload": "OR 1=1",
+      "Type": "Error-Based Injection",
+      "SQL": [
+        false,
+        null
+      ]
+    },
+    {
+      "URL": "http://testphp.vulnweb.com/artists.php?O=OR+1%3D1&R=OR+1%3D1&+=OR+1%3D1&1=OR+1%3D1&%3D=OR+1%3D1&1=OR+1%3D1",
+      "Payload": "OR 1=1",
+      "Type": "Error-Based Injection",
+      "SQL": [
+        false,
+        null
+      ]
+    },
+    {
+      "URL": "http://testphp.vulnweb.com/artists.php?O=OR+1%3D1&R=OR+1%3D1&+=OR+1%3D1&1=OR+1%3D1&%3D=OR+1%3D1&1=OR+1%3D1",
+      "Payload": "OR 1=1",
+      "Type": "Error-Based Injection",
+      "SQL": [
+        false,
+        null
+      ]
+    },
+    {
+      "URL": "http://testphp.vulnweb.com/listproducts.php?O=OR+1%3D1&R=OR+1%3D1&+=OR+1%3D1&1=OR+1%3D1&%3D=OR+1%3D1&1=OR+1%3D1",
+      "Payload": "OR 1=1",
+      "Type": "Error-Based Injection",
+      "SQL": [
+        true,
+        "MySQL"
+      ]
+    },
+    {
+      "URL": "http://testphp.vulnweb.com/listproducts.php?O=OR+1%3D1&R=OR+1%3D1&+=OR+1%3D1&1=OR+1%3D1&%3D=OR+1%3D1&1=OR+1%3D1",
+      "Payload": "OR 1=1",
+      "Type": "Error-Based Injection",
+      "SQL": [
+        true,
+        "MySQL"
+      ]
+    },
+    {
+      "URL": "http://testphp.vulnweb.com/hpp/?O=OR+1%3D1&R=OR+1%3D1&+=OR+1%3D1&1=OR+1%3D1&%3D=OR+1%3D1&1=OR+1%3D1",
+      "Payload": "OR 1=1",
+      "Type": "Error-Based Injection",
+      "SQL": [
+        false,
+        null
+      ]
+    },
+    {
+      "components": {},
+      "cve_info": {}
+    }
+  ]
+}
