@@ -1,3 +1,6 @@
+
+
+
 const mysql = require('mysql');
 const db = mysql.createConnection({
     host: 'localhost',
@@ -8,10 +11,10 @@ const db = mysql.createConnection({
 
 db.connect((err) => {
     if (err) {
-        console.error('MySQL bağlantısı başarısız:', err);
+        console.error('MySQL connection failed:', err);
         throw err;
     }
-    console.log('MySQL veritabanına bağlanıldı.');
+    console.log('Connected to MySQL database.');
 
     const sqlCommands = `
     CREATE TABLE users (
@@ -74,17 +77,17 @@ db.connect((err) => {
 
     db.query(sqlCommands, (err, result) => {
         if (err) {
-            console.error("SQL komutları çalıştırılırken hata oluştu:", err);
+            console.error("Error executing SQL commands:", err);
             throw err;
         }
-        console.log("SQL komutları başarıyla çalıştırıldı.");
+        console.log("SQL commands executed successfully.");
     });
 });
 
 db.end((err) => {
     if (err) {
-        console.error('MySQL bağlantısı kapatılırken hata oluştu:', err);
+        console.error('Error closing MySQL connection:', err);
         throw err;
     }
-    console.log('MySQL veritabanı bağlantısı kapatıldı.');
+    console.log('Closed MySQL database connection.');
 });

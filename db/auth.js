@@ -1,60 +1,63 @@
+
+
+
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const mysql = require('mysql');
 
-const secretKey = 'GüvenliRastgeleDize'; // güvenli rastgele bir dizeye değiştirilmeliyz
+const secretKey = 'SecureRandomString'; // should be replaced with a secure random string
 
-// MySQL bağlantısını oluştur
+// Create MySQL connection
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'root', 
+    user: 'root',  
     password: 'Hard.reach.ces?77', 
-    database: 'vulscan_database' 
+    database: 'vulscan_database'  
 });
 
-// Bağlantım
+// Connect to database
 db.connect((err) => {
     if (err) {
-        console.error('MySQL bağlantısı başarısız:', err);
+        console.error('MySQL connection failed:', err);
         throw err;
     }
-    console.log('MySQL veritabanına bağlanıldı.');
+    console.log('Connected to MySQL database.');
 });
 
-// JWT token'ı doğrulamak için ara yazılım
+// Middleware to verify JWT token
 function verifyToken(req, res, next) {
     const token = req.headers['authorization'];
 
     if (!token) {
-        return res.status(401).json({ error: 'Token gereklidir' });
+        return res.status(401).json({ error: 'Token is required' });
     }
 
     jwt.verify(token, secretKey, (err, decoded) => {
         if (err) {
-            return res.status(401).json({ error: 'Geçersiz token' });
+            return res.status(401).json({ error: 'Invalid token' });
         }
         req.userId = decoded.id;
         next();
     });
 }
 
-// JWT token üretme fonksiyonum
+// Function to generate JWT token
 function generateToken(userId) {
     return jwt.sign({ id: userId }, secretKey, { expiresIn: '1h' });
 }
 
-// Giriş noktam
+// Entry point
 function login(req, res) {
     const { username, password } = req.body;
 
     const sql = 'SELECT * FROM users WHERE username = ?';
     db.query(sql, [username], (err, results) => {
         if (err) {
-            console.error('Giriş hatası:', err);
-            return res.status(500).json({ error: 'Giriş sırasında bir hata oluştu' });
+            console.error('Login error:', err);
+            return res.status(500).json({ error: 'An error occurred during login' });
         }
         if (results.length === 0 || !bcrypt.compareSync(password, results[0].password)) {
-            return res.status(401).json({ error: 'Geçersiz kullanıcı adı veya şifre' });
+            return res.status(401).json({ error: 'Invalid username or password' });
         }
 
         const token = generateToken(results[0].id);
