@@ -1,6 +1,6 @@
 "use client";
 import "./style.css";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 import Logo from "../components/logo";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -11,6 +11,7 @@ const ScanPage = () => {
       const urlInput = document.getElementById("urlInput") as HTMLInputElement;
       if (!urlInput) {
         console.error("URL input element not found.");
+        window.alert("URL input is empty...");
         return;
       }
 
@@ -19,9 +20,13 @@ const ScanPage = () => {
         const response = await axios.post("http://localhost:3000/start-scan", {
           url,
         });
+        window.alert(
+          "Scan initiated and started successfully! Output will be ready in 20-25 min due to site..."
+        );
         console.log(response.data); // Handle response data
       } catch (error) {
         console.error("Error:", error);
+        window.alert("Failed to initiate scan."); // Display pop-up message
       }
     };
 

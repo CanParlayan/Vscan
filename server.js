@@ -24,9 +24,9 @@ nextApp.prepare().then(() => {
         });
     });
 
-// Define API endpoint to get latest scanned site details
+// Define API endpoint to get last 4 scanned site details
     app.get('/latest-scanned-site', (req, res) => {
-        db.get('SELECT * FROM table_info ORDER BY timestamp DESC LIMIT 1', (err, row) => {
+        db.get('SELECT * FROM table_info ORDER BY timestamp DESC LIMIT 4', (err, row) => {
             if (err) {
                 console.error(err.message);
                 res.status(500).json({ error: 'Internal server error' });
@@ -47,6 +47,7 @@ nextApp.prepare().then(() => {
             res.json({ totalVulnerabilities: row.totalVulnerabilities });
         });
     });
+    
     function login(req, res) {
         const { username, password } = req.body;
 

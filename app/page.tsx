@@ -1,11 +1,16 @@
-import React from "react";
-import "./homestyle.css";
+"use client";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import LastScannedWebsites from "./components/LastScannedWebsites";
 import Logo from "./components/logo";
+import "./homestyle.css";
 import "./components/LastScannedWebsitescss.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function Home() {
+  const [totalScans, setTotalScans] = useState(0);
+  const [totalVulnerabilities, setTotalVulnerabilities] = useState(0);
+  const [latestScannedSite, setLatestScannedSite] = useState(null);
   const lastScannedWebsites = [
     { name: "Website 1", pdfLink: "link1.pdf", date: "2023-03-01" },
     { name: "Website 2", pdfLink: "link2.pdf", date: "2023-02-15" },
@@ -28,6 +33,38 @@ export default function Home() {
     { name: "Website 9", pdfLink: "link9.pdf", date: "2023-03-15" },
     { name: "Website 10", pdfLink: "link10.pdf", date: "2023-02-18" },
   ];
+
+  useEffect(() => {
+    // Fetch total scans
+    axios
+      .get("/audited-total-sites")
+      .then((response) => {
+        setTotalScans(response.data.totalSites);
+      })
+      .catch((error) => {
+        console.error("Error fetching total scans:", error);
+      });
+
+    // Fetch total vulnerabilities
+    axios
+      .get("/total-vulnerabilities")
+      .then((response) => {
+        setTotalVulnerabilities(response.data.totalVulnerabilities);
+      })
+      .catch((error) => {
+        console.error("Error fetching total vulnerabilities:", error);
+      });
+
+    // Fetch latest scanned site
+    axios
+      .get("/latest-scanned-site")
+      .then((response) => {
+        setLatestScannedSite(response.data.latestScannedSite);
+      })
+      .catch((error) => {
+        console.error("Error fetching latest scanned site:", error);
+      });
+  }, []); // Empty dependency array ensures useEffect runs only once
 
   return (
     <html>
@@ -68,15 +105,18 @@ export default function Home() {
 
             <div className="card">
               <h6>Total scans:</h6>
-              <h3 className="carddata">12</h3>
+              <h3 className="carddata">{totalScans}</h3>
             </div>
             <div className="card">
               <h6>Total Vulnerabilities:</h6>
-              <h3 className="carddata">8</h3>
+              <h3 className="carddata">{totalVulnerabilities}</h3>
             </div>
           </div>
 
-          <LastScannedWebsites lastScannedWebsites={lastScannedWebsites} />
+          <LastScannedWebsites
+            lastScannedWebsites={latestScannedSite ? [latestScannedSite] : []}
+            /* lastScannedWebsites={lastScannedWebsites} */
+          />
         </div>
       </body>
     </html>
