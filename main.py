@@ -33,8 +33,8 @@ def perform_scans(quiet, givenurl, urls, xsspayload, nohttps, sqlipayloads, thre
 
 def attacks(report, url, quiet, xsspayload, sqlipayloads, vulnerability_tracker, threads):
     print(f"{TerminalColors.OKBLUE}XSS scan is starting{TerminalColors.ENDC}")
-#    xss_scan = XssScanner(quiet, url, vulnerability_tracker)
-#    xss_scan.scan_host(report, xsspayload)
+    xss_scan = XssScanner(quiet, url, vulnerability_tracker)
+    xss_scan.scan_host(report, xsspayload)
     print(f"{TerminalColors.OKBLUE}XSS scan finished{TerminalColors.ENDC}")
     print(f"{TerminalColors.OKBLUE}SQLI scan is starting{TerminalColors.ENDC}")
     singlescan(url, report, sqlipayloads, threads)
@@ -51,7 +51,6 @@ def main():
     sqlipayloads = []
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--crawler', help='Crawl to provided depth', dest='crawler', type=int, default=1)
     parser.add_argument('-q', '--quiet', help='quiet mode - no console output generated', dest='quiet',
                         action='store_true')
     parser.add_argument('-u', '--url', help='Provide URL for a web application, example: https://www.example.com',
@@ -82,11 +81,6 @@ def main():
     if arguments.sqlipayload:
         with open(arguments.sqlipayload, 'r') as file:
             sqlipayloads = file.read().splitlines()
-
-    if arguments.crawler:
-        urls = Crawler.deep_crawl(arguments.url, arguments.crawler)
-        if arguments.url not in urls:
-            urls.append(arguments.url)
 
     threads = arguments.threads
     perform_scans(arguments.quiet, arguments.url, urls, xsspayload, arguments.nohttps, sqlipayloads, threads)
