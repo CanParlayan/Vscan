@@ -8,7 +8,7 @@ const logo = () => {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    width: "200px", // Set width and height as needed for the container
+    width: "200px",
     height: "150px",
   };
 

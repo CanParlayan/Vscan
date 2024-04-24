@@ -1,5 +1,7 @@
+import Logo from "../components/logo";
 import "./style.css";
 import React from "react";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function history() {
   const lastScannedWebsites = [
@@ -30,16 +32,8 @@ export default function history() {
   return (
     <html>
       <body>
-        <nav className="navBar">
-          <div className="logo">SCANNER</div>
-          <div className="nav-content">
-            <i className="fa-regular fa-moon"></i>
-            &nbsp; &nbsp; &nbsp;
-            <i className="fa-solid fa-user"></i>
-          </div>
-        </nav>
-
         <nav className="sidebar">
+          <Logo />
           <ul>
             <li>
               <a href="/">
@@ -54,6 +48,11 @@ export default function history() {
             <li>
               <a href="history">
                 <i className="fas fa-history"></i> History
+              </a>
+            </li>
+            <li className="bottompart">
+              <a className="" href="login">
+                <i className="fas fa-sign-in-alt"></i> Login
               </a>
             </li>
           </ul>

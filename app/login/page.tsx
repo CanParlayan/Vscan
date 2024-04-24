@@ -1,17 +1,21 @@
 "use client";
 import React from "react";
 import "./style.css";
+import Logo from "../components/logo";
 
 const LoginPage = () => {
   return (
     <html>
       <body>
-        <div className="container">
+        <h1 className="main-text">Are you feeling Vulnerable?</h1>
+        <div className="page-container">
+          <div className="logokismi">
+            <Logo />
+          </div>
           <div className="loginBox">
             <h2>Login</h2>
-
             <div className="formGroup">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="title">Email</label>
               <input
                 type="email"
                 id="email"
@@ -20,7 +24,7 @@ const LoginPage = () => {
               />
             </div>
             <div className="formGroup">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="title">Password</label>
               <input
                 type="password"
                 id="password"
