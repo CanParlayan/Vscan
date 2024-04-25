@@ -1,3 +1,4 @@
 beautifulsoup4==4.12.3
 fake_headers==1.0.2
 Requests==2.31.0
+python-dotenv==0.14.0
