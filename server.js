@@ -12,18 +12,18 @@ const mysql = require('mysql');
 
 
 
+
 require('dotenv').config();
 const connection = mysql.createConnection({
-  host: '13.51.193.119',
+  host: process.env.host_ip,
   port: 3306,
-  user: 'root',
-  password: 'dota',
-  database: 'vscandb'
+  user: process.env.host_name,
+  password: process.env.host_pw,
+  database: process.env.db_name
 });
-
 connection.connect();
 
-connection.query('SELECT * from users', function(err, rows, fields) {
+connection.query('SELECT * from Users', function(err, rows, fields) {
     if(err) console.log(err);
     console.log('The solution is: ', rows);
     connection.end();
@@ -31,8 +31,8 @@ connection.query('SELECT * from users', function(err, rows, fields) {
 nextApp.prepare().then(() => {
     const app = express();
     http.createServer(app);
-    const wss = new WebSocket.Server({ port: 9000 });
-    const port = 8000;
+    const wss = new WebSocket.Server({ port: process.env.SOCKETPORT || 9000 });
+    const port = process.env.PORT || 8000;
 app.use(cors());
     app.use(bodyParser.json());
 
@@ -61,8 +61,8 @@ app.post('/start-scan',authenticateUser, (req, res) => {
         return res.status(400).json({ error: 'URL is required' });
     }
 
-    const pythonPath = 'C:\\Users\\hcparlayan\\AppData\\Local\\Programs\\Python\\Python312\\python';
-    const scriptPath = 'C:\\Users\\hcparlayan\\WebstormProjects\\OWASP-Top-Scanner2\\main.py';
+    const pythonPath = 'C:\\Users\\hcparlayan\\AppData\\Local\\Programs\\Python\\Python312\\python';  //will be added to .env
+    const scriptPath = 'C:\\Users\\hcparlayan\\WebstormProjects\\OWASP-Top-Scanner2\\main.py'; //will be added to .env
     const args = [
         '--url', url,
         quiet && '-q',
