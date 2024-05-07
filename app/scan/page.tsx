@@ -1,99 +1,221 @@
 "use client";
-import "./style.css";
-import React, { useEffect } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import axios from "axios";
+import "./style.css";
 import Logo from "../components/logo";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 const ScanPage = () => {
+  const [url, setUrl] = useState("");
+  const [isScanning, setIsScanning] = useState(false);
+  const [scanOutput, setScanOutput] = useState("");
+
+  const [flags, setFlags] = useState({
+    quiet: false,
+    depth: "",
+    xsspayload: "",
+    nohttps: false,
+    sqlipayload: "",
+    scan_types: [] as string[],
+  });
+
+  // Inside ScanPage component
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = event.target;
+    const newValue = type === "checkbox" ? checked : value;
+
+    setFlags((prevFlags) => ({
+      ...prevFlags,
+      [name]: newValue,
+    }));
+  };
+
+  const handleCheckBoxChange = (event: {
+    target: { name: any; value: any; checked: any };
+  }) => {
+    const { name, value, checked } = event.target;
+
+    setFlags((prevFlags) => ({
+      ...prevFlags,
+      scan_types: checked
+        ? [...prevFlags.scan_types, value]
+        : prevFlags.scan_types.filter((type) => type !== value),
+    }));
+  };
+
   useEffect(() => {
-    const startScan = async () => {
-      const urlInput = document.getElementById("urlInput") as HTMLInputElement;
-      if (!urlInput) {
-        console.error("URL input element not found.");
-        window.alert("URL input is empty...");
-        return;
-      }
+    const socket = new WebSocket("ws://localhost:9000");
 
-      const url = urlInput.value;
-      try {
-        const response = await axios.post("http://localhost:3000/start-scan", {
-          url,
-        });
-        window.alert(
-          "Scan initiated and started successfully! Output will be ready in 20-25 min due to site..."
-        );
-        console.log(response.data); // Handle response data
-      } catch (error) {
-        console.error("Error:", error);
-        window.alert("Failed to initiate scan."); // Display pop-up message
+    socket.onopen = () => {
+      console.log("WebSocket connected");
+    };
+
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === "scan_output") {
+        setScanOutput((prevOutput) => prevOutput + "\n" + data.message);
       }
     };
 
-    // Attach event listener to the button when component mounts
-    const startScanButton = document.getElementById("startScanButton");
-    if (startScanButton) {
-      startScanButton.addEventListener("click", startScan);
-    } else {
-      console.error("Start Scan button not found.");
-    }
+    socket.onclose = () => {
+      console.log("WebSocket disconnected");
+    };
 
-    // Cleanup: remove event listener when component unmounts
     return () => {
-      if (startScanButton) {
-        startScanButton.removeEventListener("click", startScan);
-      }
+      socket.close();
     };
-  }, []); // Empty dependency array ensures this effect runs only once when component mounts
+  }, []); // Empty dependency array ensures this effect runs only once
+
+  // Adjust startScan function to handle scan response
+  const startScan = async () => {
+    setIsScanning(true);
+    try {
+      const response = await axios.post("http://localhost:8000/start-scan", {
+        url,
+        ...flags,
+      });
+      console.log(response.data.message); // Log server response message
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setIsScanning(false);
+    }
+  };
 
   return (
-    <html>
-      <body>
-        <nav className="sidebar">
-          <Logo />
-          <ul>
-            <li>
-              <a href="/">
-                <i className="fas fa-chart-bar"></i> Dashboard
-              </a>
-            </li>
-            <li>
-              <a href="scan">
-                <i className="fas fa-search"></i> Scan
-              </a>
-            </li>
-            <li>
-              <a href="history">
-                <i className="fas fa-history"></i> History
-              </a>
-            </li>
-            <li className="bottompart">
-              <a className="" href="login">
-                <i className="fas fa-sign-in-alt"></i> Login
-              </a>
-            </li>
-          </ul>
-        </nav>
-
-        <div className="main-content">
-          <h1 className="main-text">This is the scanning page.</h1>
-          <div className="info-container">
-            <div className="scan-container">
-              <input
-                className="urlpaste"
-                type="text"
-                id="urlInput"
-                placeholder="Enter URL"
-              />
-
-              <button id="startScanButton" className="scanbutton">
-                Start Scan
-              </button>
+    <body>
+      <nav className="sidebar">
+        <Logo />
+        <ul>
+          <li>
+            <a href="/">
+              <i className="fas fa-chart-bar"></i> Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="scan">
+              <i className="fas fa-search"></i> Scan
+            </a>
+          </li>
+          <li>
+            <a href="history">
+              <i className="fas fa-history"></i> History
+            </a>
+          </li>
+          <li className="bottompart">
+            <a className="" href="login">
+              <i className="fas fa-sign-in-alt"></i> Login
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div className="main-content">
+        <h1 className="main-text">Scan your web page</h1>
+        <div className="scan-container">
+          <input
+            type="text"
+            name="url"
+            placeholder="Enter URL"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+          />
+          <label>
+            Quiet Mode
+            <input
+              type="checkbox"
+              name="quiet"
+              checked={flags.quiet}
+              onChange={handleInputChange}
+            />
+          </label>
+          <input
+            type="text"
+            name="depth"
+            placeholder="Depth"
+            value={flags.depth}
+            onChange={handleInputChange}
+          />
+          <input
+            type="text"
+            name="xsspayload"
+            placeholder="XSS Payload"
+            value={flags.xsspayload}
+            onChange={handleInputChange}
+          />
+          <label>
+            No HTTPS
+            <input
+              type="checkbox"
+              name="nohttps"
+              checked={flags.nohttps}
+              onChange={handleInputChange}
+            />
+          </label>
+          <input
+            type="text"
+            name="sqlipayload"
+            placeholder="SQL Injection Payload"
+            value={flags.sqlipayload}
+            onChange={handleInputChange}
+          />
+          <div>
+            <label>Select Scan Type:</label>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  name="scan_types"
+                  value="xss"
+                  checked={flags.scan_types.includes("xss")}
+                  onChange={handleCheckBoxChange}
+                />
+                Cross-Site Scripting (XSS)
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="scan_types"
+                  value="headers"
+                  checked={flags.scan_types.includes("headers")}
+                  onChange={handleCheckBoxChange}
+                />
+                Headers
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="scan_types"
+                  value="sqli"
+                  checked={flags.scan_types.includes("sqli")}
+                  onChange={handleCheckBoxChange}
+                />
+                SQL Injection (SQLi)
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="scan_types"
+                  value="outdated"
+                  checked={flags.scan_types.includes("outdated")}
+                  onChange={handleCheckBoxChange}
+                />
+                Outdated Software
+              </label>
             </div>
           </div>
+
+          {scanOutput && (
+            <div className="output-container">
+              <h3>Scan Output:</h3>
+              <pre>{scanOutput}</pre>
+            </div>
+          )}
+          <button className="button" onClick={startScan} disabled={isScanning}>
+            {isScanning ? "Scanning..." : "Start Scan"}
+          </button>
         </div>
-      </body>
-    </html>
+      </div>
+    </body>
   );
 };
 

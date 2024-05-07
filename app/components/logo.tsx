@@ -2,7 +2,7 @@ import React from "react";
 
 const logo = () => {
   const imageUrl =
-    "https://upload.wikimedia.org/wikipedia/commons/5/57/X_logo_2023_%28white%29.png"; // URL of the webp image
+    "https://i.imgur.com/QKxqUR6.png"; // URL of the webp image
 
   const containerStyle = {
     display: "flex",
@@ -13,8 +13,8 @@ const logo = () => {
   };
 
   const imageStyle = {
-    maxWidth: "80%",
-    maxHeight: "60%",
+    maxWidth: "100%",
+    maxHeight: "100%",
   };
 
   return (
