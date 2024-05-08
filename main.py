@@ -8,7 +8,6 @@ from VulnerabilityScanner.SecurityHeaders import SecurityHeaders
 from VulnerabilityScanner.XssScanner import XssScanner
 from VulnerabilityScanner.outdated import Outdated
 from VulnerabilityScanner.sqli import singlescan
-from VulnerabilityScanner.crypto import *
 from VulnerabilityScanner.components.terminalColors import TerminalColors
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -22,7 +21,7 @@ def perform_http_request(url):
 
 def perform_scans(quiet, givenurl, urls, xsspayload, nohttps, sqlipayloads, scan_types, report):
     if not scan_types:
-        scan_types = ['enum', 'headers', 'xss', 'sqli', 'outdated', 'crypto']
+        scan_types = ['enum', 'headers', 'xss', 'sqli', 'outdated']
     try:
         response = perform_http_request(givenurl)
         if response.status_code != 200:
@@ -36,8 +35,6 @@ def perform_scans(quiet, givenurl, urls, xsspayload, nohttps, sqlipayloads, scan
                 run_xss_scans(urls, report, quiet, xsspayload)
             elif scan_type == 'sqli':
                 run_sqli_scans(urls, report, quiet, sqlipayloads)
-            elif scan_type == 'crypto':
-                run_crypto_scans(urls)
             elif scan_type == 'outdated':
                 run_outdated_scans(givenurl, report)
 
@@ -76,13 +73,6 @@ def run_sqli_scans(urls, report, quiet, sqlipayloads):
         print(f"Scanning for SQL injection on: {url}")
         singlescan(url, report, sqlipayloads, quiet)
     print(f"{TerminalColors.OKBLUE}SQL injection scans completed{TerminalColors.ENDC}")
-
-def run_crypto_scans(urls):
-    print(f"{TerminalColors.OKBLUE}Initiating Crpyptographic Failure scans on collected URLs{TerminalColors.ENDC}")
-    for url in urls:
-        print(f"{TerminalColors.HEADER} {url}{TerminalColors.ENDC}")
-        testConnection(url, jsonPath="payloads/crypto.json")
-    print(f"{TerminalColors.OKBLUE}Cryptographic failure scans completed{TerminalColors.ENDC}")
 
 
 def run_outdated_scans(givenurl, report):
@@ -134,7 +124,7 @@ def main():
             sqlipayloads = file.read().splitlines()
 
     scan_types = arguments.scan_types.split(',') if arguments.scan_types else ['enum', 'headers', 'xss', 'sqli',
-                                                                               'outdated', 'crypto']
+                                                                               'outdated']
     report = ReportGenerator(arguments.url)
     perform_scans(arguments.quiet, arguments.url, urls, arguments.xsspayload, arguments.nohttps, sqlipayloads,
                   scan_types, report)
