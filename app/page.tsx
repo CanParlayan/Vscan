@@ -11,24 +11,28 @@ export default function Home() {
   const [totalScans, setTotalScans] = useState(0);
   const [totalVulnerabilities, setTotalVulnerabilities] = useState(0);
   const [latestScannedSite, setLatestScannedSite] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
 
-  const lastScannedWebsites = [
-    // Your sample data for lastScannedWebsites
-  ];
+  const lastScannedWebsites = [];
 
   useEffect(() => {
     // Fetch total scans, vulnerabilities, and latest scanned site
     const fetchDashboardData = async () => {
       try {
-        const [totalScansResponse, totalVulnerabilitiesResponse, latestScannedSiteResponse] = await Promise.all([
+        const [
+          totalScansResponse,
+          totalVulnerabilitiesResponse,
+          latestScannedSiteResponse,
+        ] = await Promise.all([
           axios.get("/audited-total-sites"),
           axios.get("/total-vulnerabilities"),
-          axios.get("/latest-scanned-site")
+          axios.get("/latest-scanned-site"),
         ]);
 
         setTotalScans(totalScansResponse.data.totalSites);
-        setTotalVulnerabilities(totalVulnerabilitiesResponse.data.totalVulnerabilities);
+        setTotalVulnerabilities(
+          totalVulnerabilitiesResponse.data.totalVulnerabilities
+        );
         setLatestScannedSite(latestScannedSiteResponse.data.latestScannedSite);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -40,12 +44,25 @@ export default function Home() {
 
   const handleLoginClick = () => {
     if (isLoggedIn) {
-      alert("You are already logged in!");
+      // Perform logout actions
+      setIsLoggedIn(false); // Set isLoggedIn to false
+      // Clear any session-related data or perform additional cleanup
+      // For example, clear local storage or session storage
+      localStorage.removeItem("accessToken"); // Example of clearing access token from local storage
+      // Redirect to the login page
+      window.location.href = "/login";
     } else {
       // Navigate to login page if not logged in
       window.location.href = "/login";
     }
   };
+
+  // Redirect to login page if not logged in
+  useEffect(() => {
+    if (!isLoggedIn) {
+      window.location.href = "/login";
+    }
+  }, [isLoggedIn]);
 
   return (
     <html>
@@ -69,8 +86,14 @@ export default function Home() {
               </a>
             </li>
             <li className="bottompart">
+              {/* Render login or logout button based on isLoggedIn state */}
               <a className="" href="#" onClick={handleLoginClick}>
-                <i className="fas fa-sign-in-alt"></i> Login
+                <i
+                  className={`fas ${
+                    isLoggedIn ? "fa-sign-out-alt" : "fa-sign-in-alt"
+                  }`}
+                ></i>{" "}
+                {isLoggedIn ? "Logout" : "Login"}
               </a>
             </li>
           </ul>
@@ -95,7 +118,6 @@ export default function Home() {
           </div>
           <LastScannedWebsites
             lastScannedWebsites={latestScannedSite ? [latestScannedSite] : []}
-            /* lastScannedWebsites={lastScannedWebsites} */
           />
         </div>
       </body>

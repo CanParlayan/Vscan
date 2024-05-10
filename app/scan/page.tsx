@@ -9,6 +9,7 @@ const ScanPage = () => {
   const [url, setUrl] = useState("");
   const [isScanning, setIsScanning] = useState(false);
   const [scanOutput, setScanOutput] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
 
   const [flags, setFlags] = useState({
     quiet: false,
@@ -66,6 +67,28 @@ const ScanPage = () => {
     };
   }, []); // Empty dependency array ensures this effect runs only once
 
+  const handleLoginClick = () => {
+    if (isLoggedIn) {
+      // Perform logout actions
+      setIsLoggedIn(false); // Set isLoggedIn to false
+      // Clear any session-related data or perform additional cleanup
+      // For example, clear local storage or session storage
+      localStorage.removeItem("accessToken"); // Example of clearing access token from local storage
+      // Redirect to the login page
+      window.location.href = "/login";
+    } else {
+      // Navigate to login page if not logged in
+      window.location.href = "/login";
+    }
+  };
+
+  // Redirect to login page if not logged in
+  useEffect(() => {
+    if (!isLoggedIn) {
+      window.location.href = "/login";
+    }
+  }, [isLoggedIn]);
+
   // Adjust startScan function to handle scan response
   const startScan = async () => {
     setIsScanning(true);
@@ -103,8 +126,14 @@ const ScanPage = () => {
             </a>
           </li>
           <li className="bottompart">
-            <a className="" href="login">
-              <i className="fas fa-sign-in-alt"></i> Login
+            {/* Render login or logout button based on isLoggedIn state */}
+            <a className="" href="#" onClick={handleLoginClick}>
+              <i
+                className={`fas ${
+                  isLoggedIn ? "fa-sign-out-alt" : "fa-sign-in-alt"
+                }`}
+              ></i>{" "}
+              {isLoggedIn ? "Logout" : "Login"}
             </a>
           </li>
         </ul>

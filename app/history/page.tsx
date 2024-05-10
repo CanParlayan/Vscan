@@ -1,9 +1,10 @@
 import Logo from "../components/logo";
 import "./style.css";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function history() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
   const lastScannedWebsites = [
     { name: "Website 1", pdfLink: "link1.pdf", date: "2023-03-01" },
     { name: "Website 2", pdfLink: "link2.pdf", date: "2023-02-15" },
@@ -29,6 +30,28 @@ export default function history() {
 
   const reversedData = lastScannedWebsites.reverse();
 
+  const handleLoginClick = () => {
+    if (isLoggedIn) {
+      // Perform logout actions
+      setIsLoggedIn(false); // Set isLoggedIn to false
+      // Clear any session-related data or perform additional cleanup
+      // For example, clear local storage or session storage
+      localStorage.removeItem("accessToken"); // Example of clearing access token from local storage
+      // Redirect to the login page
+      window.location.href = "/login";
+    } else {
+      // Navigate to login page if not logged in
+      window.location.href = "/login";
+    }
+  };
+
+  // Redirect to login page if not logged in
+  useEffect(() => {
+    if (!isLoggedIn) {
+      window.location.href = "/login";
+    }
+  }, [isLoggedIn]);
+
   return (
     <html>
       <body>
@@ -51,8 +74,14 @@ export default function history() {
               </a>
             </li>
             <li className="bottompart">
-              <a className="" href="login">
-                <i className="fas fa-sign-in-alt"></i> Login
+              {/* Render login or logout button based on isLoggedIn state */}
+              <a className="" href="#" onClick={handleLoginClick}>
+                <i
+                  className={`fas ${
+                    isLoggedIn ? "fa-sign-out-alt" : "fa-sign-in-alt"
+                  }`}
+                ></i>{" "}
+                {isLoggedIn ? "Logout" : "Login"}
               </a>
             </li>
           </ul>
