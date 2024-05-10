@@ -8,6 +8,7 @@ from VulnerabilityScanner.SecurityHeaders import SecurityHeaders
 from VulnerabilityScanner.XssScanner import XssScanner
 from VulnerabilityScanner.outdated import Outdated
 from VulnerabilityScanner.sqli import singlescan
+from VulnerabilityScanner.crypto import *
 from VulnerabilityScanner.components.terminalColors import TerminalColors
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -21,7 +22,7 @@ def perform_http_request(url):
 
 def perform_scans(quiet, givenurl, urls, xsspayload, nohttps, sqlipayloads, scan_types, report):
     if not scan_types:
-        scan_types = ['enum', 'headers', 'xss', 'sqli', 'outdated']
+        scan_types = ['enum', 'headers', 'xss', 'sqli', 'outdated', 'crypto']
     try:
         response = perform_http_request(givenurl)
         if response.status_code != 200:
@@ -35,6 +36,8 @@ def perform_scans(quiet, givenurl, urls, xsspayload, nohttps, sqlipayloads, scan
                 run_xss_scans(urls, report, quiet, xsspayload)
             elif scan_type == 'sqli':
                 run_sqli_scans(urls, report, quiet, sqlipayloads)
+            elif scan_type == 'crypto':
+                run_crypto_scans(urls, report)
             elif scan_type == 'outdated':
                 run_outdated_scans(givenurl, report)
 
@@ -43,6 +46,11 @@ def perform_scans(quiet, givenurl, urls, xsspayload, nohttps, sqlipayloads, scan
             f"{TerminalColors.FAIL}Connection to: {givenurl} could not be established, error: {e}{TerminalColors.ENDC}")
         exit()
 
+
+def run_crypto_scans(urls, report):
+    print(f"{TerminalColors.OKBLUE}Initiating Crpyptographic Failure scans on collected URLs{TerminalColors.ENDC}")
+    testConnection(urls[0], report)
+    print(f"{TerminalColors.OKBLUE}Cryptographic failure scans completed{TerminalColors.ENDC}")
 
 def run_xss_scans(urls, report, quiet, xsspayload):
     print(f"{TerminalColors.OKBLUE}Initiating XSS scans on collected URLs{TerminalColors.ENDC}")
@@ -124,7 +132,7 @@ def main():
             sqlipayloads = file.read().splitlines()
 
     scan_types = arguments.scan_types.split(',') if arguments.scan_types else ['enum', 'headers', 'xss', 'sqli',
-                                                                               'outdated']
+                                                                               'outdated', 'crypto']
     report = ReportGenerator(arguments.url)
     perform_scans(arguments.quiet, arguments.url, urls, arguments.xsspayload, arguments.nohttps, sqlipayloads,
                   scan_types, report)
