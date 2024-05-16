@@ -33,13 +33,20 @@ const ClientComponent: React.FC = () => {
     <div className="scan-container">
       <input
         type="text"
+        className="url"
+        id="urlInput"
         placeholder="Enter URL"
         value={url}
         onChange={handleInputChange}
       />
-      <button onClick={startScan} disabled={isScanning}>
+      <button
+        className="scanbutton"
+        onClick={startScan}
+        disabled={isScanning}
+      >
         {isScanning ? "Scanning..." : "Start Scan"}
       </button>
+
       {scanOutput && (
         <div className="output-container">
           <h3>Scan Output:</h3>

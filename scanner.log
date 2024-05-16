@@ -1,0 +1,335 @@
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 11
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /login.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /login.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /index.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /categories.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /artists.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /disclaimer.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /cart.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /guestbook.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /AJAX/index.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /signup.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /userinfo.php HTTP/1.1" 302 None
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /login.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /privacy.php HTTP/1.1" 404 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /Mod_Rewrite_Shop/ HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /hpp/ HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /listproducts.php?cat=1 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /listproducts.php?cat=2 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /listproducts.php?cat=3 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /listproducts.php?cat=4 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /artists.php?artist=1 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /artists.php?artist=2 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /artists.php?artist=3 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /signup.php HTTP/1.1" 200 None
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /login.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /login.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /index.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /categories.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /artists.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /disclaimer.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /cart.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /guestbook.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /AJAX/index.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /signup.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /userinfo.php HTTP/1.1" 302 None
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /login.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /privacy.php HTTP/1.1" 404 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /Mod_Rewrite_Shop/ HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /hpp/ HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /listproducts.php?cat=1 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /listproducts.php?cat=2 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /listproducts.php?cat=3 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /listproducts.php?cat=4 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /artists.php?artist=1 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /artists.php?artist=2 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /artists.php?artist=3 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /listproducts.php?cat=3 HTTP/1.1" 200 None
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /login.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /login.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /index.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /categories.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /artists.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /disclaimer.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /cart.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /guestbook.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /AJAX/index.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /signup.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /userinfo.php HTTP/1.1" 302 None
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /login.php HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /privacy.php HTTP/1.1" 404 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /Mod_Rewrite_Shop/ HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /hpp/ HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /listproducts.php?cat=1 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /listproducts.php?cat=2 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /listproducts.php?cat=3 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /listproducts.php?cat=4 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /artists.php?artist=1 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /artists.php?artist=2 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /artists.php?artist=3 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): testphp.vulnweb.com:80
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /userinfo.php HTTP/1.1" 302 None
+DEBUG:urllib3.connectionpool:http://testphp.vulnweb.com:80 "GET /login.php HTTP/1.1" 200 None
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+ERROR:root:Traceback (most recent call last):
+  File "C:\Users\hcparlayan\WebstormProjects\OWASP-Top-Scanner3\main.py", line 130, in main
+    perform_scans(arguments.quiet, url, urls, arguments.xsspayload, arguments.nohttps, sqlipayloads, scan_types, report)
+  File "C:\Users\hcparlayan\WebstormProjects\OWASP-Top-Scanner3\main.py", line 45, in perform_scans
+    run_crypto_scans(urls, report)
+  File "C:\Users\hcparlayan\WebstormProjects\OWASP-Top-Scanner3\main.py", line 56, in run_crypto_scans
+    testConnection(urls[0], report)
+                   ~~~~^^^
+IndexError: list index out of range
+
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "POST / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): unpkg.com:443
+DEBUG:urllib3.connectionpool:https://unpkg.com:443 "GET /all@latest/package.json HTTP/1.1" 302 None
+DEBUG:urllib3.connectionpool:https://unpkg.com:443 "GET /all@0.0.0/package.json HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): cdnjs.cloudflare.com:443
+DEBUG:urllib3.connectionpool:https://cdnjs.cloudflare.com:443 "GET /ajax/libs/font-awesome/6.5.1/css/all.min.css HTTP/1.1" 200 21778
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.cvesearch.com:443
+DEBUG:urllib3.connectionpool:https://api.cvesearch.com:443 "GET /search?q=all%206.5.1 HTTP/1.1" 200 41168
+ERROR:root:Traceback (most recent call last):
+  File "C:\Users\hcparlayan\WebstormProjects\OWASP-Top-Scanner3\main.py", line 134, in main
+    perform_scans(arguments.quiet, url, urls, arguments.xsspayload, arguments.nohttps, sqlipayloads, scan_types, report)
+  File "C:\Users\hcparlayan\WebstormProjects\OWASP-Top-Scanner3\main.py", line 47, in perform_scans
+    run_outdated_scans(givenurl, report)
+  File "C:\Users\hcparlayan\WebstormProjects\OWASP-Top-Scanner3\main.py", line 97, in run_outdated_scans
+    tester.run_tests(report)
+  File "C:\Users\hcparlayan\WebstormProjects\OWASP-Top-Scanner3\VulnerabilityScanner\outdated.py", line 145, in run_tests
+    self.check_for_cve()
+  File "C:\Users\hcparlayan\WebstormProjects\OWASP-Top-Scanner3\VulnerabilityScanner\outdated.py", line 196, in check_for_cve
+    if cve_data['totalResults'] > 0:
+       ~~~~~~~~^^^^^^^^^^^^^^^^
+KeyError: 'totalResults'
+
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "POST / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "POST / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451

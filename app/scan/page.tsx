@@ -20,6 +20,17 @@ const ScanPage = () => {
     scan_types: [] as string[],
   });
 
+  const handleLoginClick = () => {
+    if (isLoggedIn) {
+      // Perform logout actions
+      setIsLoggedIn(false);
+      localStorage.removeItem("accessToken"); // Clear stored token
+      window.location.href = "/login"; // Redirect to login page
+    } else {
+      // Redirect to login page if not logged in
+      window.location.href = "/login";
+    }
+  };
   // Inside ScanPage component
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = event.target;
@@ -44,8 +55,8 @@ const ScanPage = () => {
     }));
   };
 
-  useEffect(() => {
 
+  useEffect(() => {
     const socket = new WebSocket("ws://localhost:9000");
 
     socket.onopen = () => {
@@ -68,19 +79,6 @@ const ScanPage = () => {
     };
   }, []); // Empty dependency array ensures this effect runs only once
 
-  const handleLoginClick = () => {
-    if (isLoggedIn) {
-      // Perform logout actions
-      setIsLoggedIn(false);
-      localStorage.removeItem("accessToken"); // Clear stored token
-      window.location.href = "/login"; // Redirect to login page
-    } else {
-      // Redirect to login page if not logged in
-      window.location.href = "/login";
-    }
-  };
-
-  // Redirect to login page if not logged in
   useEffect(() => {
   // Check authentication status
   const checkAuthStatus = async () => {
@@ -95,7 +93,6 @@ const ScanPage = () => {
 
   checkAuthStatus();
 }, []);
-
   // Adjust startScan function to handle scan response
   const startScan = async () => {
     setIsScanning(true);
@@ -103,11 +100,8 @@ const ScanPage = () => {
       const response = await axios.post("http://localhost:8000/start-scan", {
         url,
         ...flags,
-      });const { stdout, message } = response.data;
-      if (stdout) {
-        setScanOutput(stdout);
-      }
-      console.log(message);
+      });
+      console.log(response.data.message); // Log server response message
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -139,9 +133,9 @@ const ScanPage = () => {
             {/* Render login or logout button based on isLoggedIn state */}
             <a className="" href="#" onClick={handleLoginClick}>
               <i
-                className={`fas ${
-                  isLoggedIn ? "fa-sign-out-alt" : "fa-sign-in-alt"
-                }`}
+                  className={`fas ${
+                      isLoggedIn ? "fa-sign-out-alt" : "fa-sign-in-alt"
+                  }`}
               ></i>{" "}
               {isLoggedIn ? "Logout" : "Login"}
             </a>
@@ -152,16 +146,16 @@ const ScanPage = () => {
         <h1 className="main-text">Scan your web page</h1>
         <div className="scan-container">
           <input
-            type="text"
-            name="url"
-            placeholder="Enter URL"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
+              type="text"
+              name="url"
+              placeholder="Enter URL"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
           />
           <label>
             Quiet Mode
             <input
-              type="checkbox"
+                type="checkbox"
               name="quiet"
               checked={flags.quiet}
               onChange={handleInputChange}
@@ -202,52 +196,62 @@ const ScanPage = () => {
             <div>
               <label>
                 <input
-                  type="checkbox"
-                  name="scan_types"
-                  value="xss"
-                  checked={flags.scan_types.includes("xss")}
-                  onChange={handleCheckBoxChange}
+                    type="checkbox"
+                    name="scan_types"
+                    value="xss"
+                    checked={flags.scan_types.includes("xss")}
+                    onChange={handleCheckBoxChange}
                 />
                 Cross-Site Scripting (XSS)
               </label>
               <label>
                 <input
-                  type="checkbox"
-                  name="scan_types"
-                  value="headers"
-                  checked={flags.scan_types.includes("headers")}
-                  onChange={handleCheckBoxChange}
+                    type="checkbox"
+                    name="scan_types"
+                    value="headers"
+                    checked={flags.scan_types.includes("headers")}
+                    onChange={handleCheckBoxChange}
                 />
                 Headers
               </label>
               <label>
                 <input
-                  type="checkbox"
-                  name="scan_types"
-                  value="sqli"
-                  checked={flags.scan_types.includes("sqli")}
-                  onChange={handleCheckBoxChange}
+                    type="checkbox"
+                    name="scan_types"
+                    value="sqli"
+                    checked={flags.scan_types.includes("sqli")}
+                    onChange={handleCheckBoxChange}
                 />
                 SQL Injection (SQLi)
               </label>
               <label>
                 <input
-                  type="checkbox"
-                  name="scan_types"
-                  value="outdated"
-                  checked={flags.scan_types.includes("outdated")}
-                  onChange={handleCheckBoxChange}
+                    type="checkbox"
+                    name="scan_types"
+                    value="outdated"
+                    checked={flags.scan_types.includes("outdated")}
+                    onChange={handleCheckBoxChange}
                 />
                 Outdated Software
+              </label>
+              <label>
+                <input
+                    type="checkbox"
+                    name="scan_types"
+                    value="crypto"
+                    checked={flags.scan_types.includes("crypto")}
+                    onChange={handleCheckBoxChange}
+                />
+                Crypto
               </label>
             </div>
           </div>
 
           {scanOutput && (
-            <div className="output-container">
-              <h3>Scan Output:</h3>
-              <pre>{scanOutput}</pre>
-            </div>
+              <div className="output-container">
+                <h3>Scan Output:</h3>
+                <pre>{scanOutput}</pre>
+              </div>
           )}
           <button className="button" onClick={startScan} disabled={isScanning}>
             {isScanning ? "Scanning..." : "Start Scan"}

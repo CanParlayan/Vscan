@@ -170,91 +170,116 @@ function requireLogin(req, res, next) {
 
 
 
-        app.post('/start-scan', requireLogin, (req, res) => {
-            const userId = req.cookies.userId;
-            const {url, quiet, depth, xsspayload, nohttps, sqlipayload, scan_types} = req.body;
-            if (!url) {
-                return res.status(400).json({error: 'URL is required'});
-            }
+app.post('/start-scan', requireLogin, async (req, res) => {
+    const userId = req.cookies.userId;
+    const { url, quiet, depth, xsspayload, nohttps, sqlipayload, scan_types } = req.body;
+    if (!url) {
+        return res.status(400).json({ error: 'URL is required' });
+    }
+    const startDate = new Date();
+    const formattedStartDate = formatDate(startDate);
+    console.log('Scan started at:', formattedStartDate);
+    const filename = "report_"+formattedStartDate+".json"
+    const pythonPath = 'C:\\Users\\hcparlayan\\AppData\\Local\\Programs\\Python\\Python312\\python';  //will be added to .env
+            const scriptPath = 'C:\\Users\\hcparlayan\\WebstormProjects\\OWASP-Top-Scanner3\\main.py'; //will be added to .env
 
-            const pythonPath = 'C:\\Users\\hcparlayan\\AppData\\Local\\Programs\\Python\\Python312\\python';  //will be added to .env
-            const scriptPath = 'C:\\Users\\hcparlayan\\WebstormProjects\\OWASP-Top-Scanner2\\main.py'; //will be added to .env
-            const args = [
-                '--url', url,
-                quiet && '-q',
-                depth && '--depth', depth,
-                xsspayload && '--xsspayload', xsspayload,
-                nohttps && '--nohttps',
-                sqlipayload && '--sqlipayload', sqlipayload,
-                scan_types && '--scan-type', scan_types
-            ].filter(Boolean);
 
-            try {
-                const pythonProcess = spawn(pythonPath, [scriptPath, ...args]);
+    const args = [
+        '--url', url,
+        quiet && '-q',
+        depth && '--depth', depth,
+        xsspayload && '--xsspayload', xsspayload,
+        nohttps && '--nohttps',
+        sqlipayload && '--sqlipayload', sqlipayload,
+        scan_types && '--scan-type', scan_types
+    ].filter(Boolean);
 
-                pythonProcess.stdout.on('data', (data) => {
-                    const output = data.toString().trim(); // Convert stdout data to string
-                    console.log('Python output:', output);
+    try {
 
-                    // Split output into lines and broadcast each line to WebSocket clients
-                    output.split('\n').forEach((line) => {
-                        wss.clients.forEach((client) => {
-                            if (client.readyState === WebSocket.OPEN) {
-                                client.send(JSON.stringify({type: 'scan_output', message: line}));
-                            }
-                        });
-                    });
+        const pythonProcess = spawn(pythonPath, [scriptPath, ...args]);
+        console.log("Scan started officially")
+        pythonProcess.stdout.on('data', (data) => {
+            const output = data.toString().trim();
+            console.log('Python output:', output);
+
+            output.split('\n').forEach((line) => {
+                wss.clients.forEach((client) => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify({ type: 'scan_output', message: line }));
+                    }
                 });
+            });
+        });
 
+        pythonProcess.stderr.on('data', (data) => {
+    const errorOutput = data.toString().trim();
+    console.error('Python error:', errorOutput);
+});
+        pythonProcess.on('close', async (code) => { // Make the callback async
+            console.log('Python process exited with code:', code);
+            const message = code === 0 ? 'Scan completed successfully' : `Scan failed with exit code ${code}`;
 
-                pythonProcess.on('close', (code) => {
-                    console.log('Python process exited with code:', code);
-                    const message = code === 0 ? 'Scan completed successfully' : `Scan failed with exit code ${code}`;
+            wss.clients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify({ type: 'scan_output', message }));
+                }
+            });
 
-                    wss.clients.forEach((client) => {
-                        if (client.readyState === WebSocket.OPEN) {
-                            client.send(JSON.stringify({type: 'scan_output', message}));
-                        }
-                    });
+            if (code === 0) {
+                res.json({ message: 'Scan completed successfully' });
+                try {
+                    reports_path="C:\\Users\\hcparlayan\\WebstormProjects\\OWASP-Top-Scanner3\\reports\\"
+                    console.log(reports_path+filename)
+                    const parsedData = parsedAuditData(reports_path+filename);
+                    console.log(parsedData);
+                    console.log("Saving Data");
+                    await saveAuditDataToDatabase(parsedData, userId);
+                    res.json({ message: 'Audit data saved successfully' });
+                } catch (error) {
+                    console.error('Error saving audit data:', error);
+                    res.status(500).json({ error: 'Internal server error' });
+                }
+            } else {
+                res.status(500).json({ error: 'An error occurred during scanning' });
+            }
+        });
 
-                    if (code === 0) {
-                        res.json({message: 'Scan completed successfully'});
-                          const filename = "audit_data.json";
+    } catch (error) {
+        console.error('Error spawning Python process:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    const hours = ('0' + date.getHours()).slice(-2);
+    const minutes = ('0' + date.getMinutes()).slice(-2);
+
+    return `${year}${month}${day}-${hours}${minutes}`;
+}
+function timeCheck(timestamp){
+    console.log('Time Check:', timestamp);
+}
+// Endpoint to check if user is authenticated
+app.get('/db', async (req, res) => {
+    const userId = 1 // Assuming you have user data stored in the request
+    const reports_path = "C:\\Users\\hcparlayan\\WebstormProjects\\OWASP-Top-Scanner3\\reports\\";
+    const filename = "report_20240516-2220.json";
+
+    console.log(reports_path + filename);
+
     try {
-userId = req.cookies.userId;
-
-        if (!userId) {
-            return res.status(401).json({ error: 'User not authenticated' });
-        }
-
-    try {
-        const parsedData = parsedAuditData(filename);
-        console.log(parsedData)
+        const parsedData = parsedAuditData(reports_path + filename);
+        console.log(parsedData);
         console.log("Saving Data");
         await saveAuditDataToDatabase(parsedData, userId);
         res.json({ message: 'Audit data saved successfully' });
     } catch (error) {
-        console.error('Error saving audit data:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('Error:', error);
+        res.status(500).json({ message: 'Error saving audit data' });
     }
-    } catch (error) {
-        console.error('Error checking authentication:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-                    } else {
-                        res.status(500).json({error: 'An error occurred during scanning'});
-                    }
-                });
-
-            } catch (error) {
-                console.error('Error spawning Python process:', error);
-                res.status(500).json({error: 'Internal server error'});
-            }
-        });
-
-
-
-// Endpoint to check if user is authenticated
+});
 
 
 app.post('/login', async (req, res) => {
@@ -342,21 +367,39 @@ function parsedAuditData(filename) {
         parsedData.siteUrl = data.site_url || '';
         parsedData.isHttps = parsedData.siteUrl.startsWith('https');
         parsedData.timestamp = data.timestamp ? formatTimestamp(data.timestamp) : '';
+const auditDetails = data['Audit Details'];
+        if (auditDetails && auditDetails['enum'] && Array.isArray(auditDetails['enum']['details']) && auditDetails['enum']['details'].length > 0) {
+    const nmapDetails = auditDetails['enum']['details'][0];
 
-        const nmapReport = data['Audit Details']['enum']['details'][0];
-        const ipMatch = nmapReport.match(/Nmap scan report for (\S+) \((\d+\.\d+\.\d+\.\d+)\)/);
-        if (ipMatch) {
-            parsedData.ipDetails.hostname = ipMatch[1];
-            parsedData.ipDetails.ip = ipMatch[2];
-        }
+    // Use try-catch to handle potential errors when processing nmapDetails
+    try {
+        const ipMatch = nmapDetails.match(/Nmap scan report for (\S+) \((\d+\.\d+\.\d+\.\d+)\)/);
+        if (ipMatch && ipMatch.length >= 3) {
+            const hostname = ipMatch[1];
+            const ipAddress = ipMatch[2];
 
-        // Extract open ports
-        const openPorts = nmapReport.matchAll(/(\d+)\/tcp\s+open\s+(\S+)/g);
-        for (const match of openPorts) {
-            const port = match[1];
-            const service = match[2];
-            parsedData.openPorts.push({ port, service });
+            // Proceed with using hostname and ipAddress
+            parsedData.ipDetails.hostname = hostname;
+            parsedData.ipDetails.ip = ipAddress;
+
+            // Extract open ports
+            const openPorts = nmapDetails.matchAll(/(\d+)\/tcp\s+open\s+(\S+)/g);
+            for (const match of openPorts) {
+                const port = match[1];
+                const service = match[2];
+                parsedData.openPorts.push({ port, service });
+            }
+        } else {
+            console.log('Invalid nmap details format:', nmapDetails);
         }
+    } catch (error) {
+        console.error('Error processing nmap details:', error);
+        // Handle the error gracefully without stopping execution
+    }
+} else {
+    console.log('Audit details structure does not match expected format or is missing "enum" or "details"');
+}
+
 
         // Extract SQLi vulnerabilities
         if (data['Audit Details']['sqli']) {
@@ -375,71 +418,66 @@ function parsedAuditData(filename) {
         parsedData.clickjackingAlert = (data['Audit Details']['clickjacking'][parsedData.siteUrl] || [])[0];
 
         // Handle outdated components
-const outdatedComponents = data['Audit Details']['outdated']['Detected Components'];
-Object.entries(outdatedComponents).forEach(([componentName, componentInfo]) => {
-    const component = {
-        componentName,
-        currentVersion: componentInfo['Current Version'],
-        latestVersion: componentInfo['Latest Version'],
-        status: componentInfo['Status'],
-        cveDetails: [] // Initialize an array to hold CVE details
-    };
-
-    // Check if CVE entries exist for the current component
-    if (componentName in data['Audit Details']['outdated']['cve']) {
-        const cveEntries = data['Audit Details']['outdated']['cve'][componentName];
-
-        // Iterate over each CVE entry and push to cveDetails array
-        Object.entries(cveEntries).forEach(([cveId, cveDescription]) => {
-            const cveDetail = {
-                cveId,
-                cveDescription
+const outdatedComponents = auditDetails?.outdated?.['Detected Components'] || {};
+        Object.entries(outdatedComponents).forEach(([componentName, componentInfo]) => {
+            const component = {
+                componentName,
+                currentVersion: componentInfo['Current Version'] || '',
+                latestVersion: componentInfo['Latest Version'] || '',
+                status: componentInfo['Status'] || '',
+                cveDetails: [] // Initialize an array to hold CVE details
             };
 
-            component.cveDetails.push(cveDetail);
+            // Check if CVE entries exist for the current component
+            const cveEntries = auditDetails?.outdated?.cve?.[componentName] || {};
+            Object.entries(cveEntries).forEach(([cveId, cveDescription]) => {
+                const cveDetail = {
+                    cveId,
+                    cveDescription
+                };
+                component.cveDetails.push(cveDetail);
+            });
+
+            parsedData.outdatedComponents.push(component);
         });
-
-    }
-
-    parsedData.outdatedComponents.push(component);
-});
-
 
         // Extract XSS vulnerabilities
         if (data['Audit Details']['Xss Vulnerabilties']) {
     data['Audit Details']['Xss Vulnerabilties'].forEach(xssVuln => {
-        const inputs = xssVuln.details.inputs.map(input => ({
-            type: input.type,
-            name: input.name,
-            value: input.value
-        }));
+       const inputs = xssVuln.details && xssVuln.details.inputs ? xssVuln.details.inputs.map(input => ({
+    type: input.type || '',
+    name: input.name || '',
+    value: input.value || ''
+})) : [];
 
-        const vulnerability = {
-            url: xssVuln.url,
-            inputs: inputs,
-            action: xssVuln.details.action,
-            method: xssVuln.details.method,
-            payload: xssVuln.payload
-        };
-        parsedData.xssVulnerabilities.push(vulnerability);
+const vulnerability = {
+    url: xssVuln.url || '',
+    inputs: inputs,
+    action: xssVuln.details?.action || '',
+    method: xssVuln.details?.method || '',
+    payload: xssVuln.payload || ''
+};
+parsedData.xssVulnerabilities.push(vulnerability);
+});
+        }
+
+
+
+
+        // Extract crawled URLs
+        parsedData.crawledUrls = data['Collected URLs'] || [];
+        // Handle crypto ciphers
+        if (data['Audit Details']['crypto'] && data['Audit Details']['crypto']['ciphers']) {
+    data['Audit Details']['crypto']['ciphers'].forEach(cipherInfo => {
+        const [cipherName, cipherScore] = cipherInfo;
+        parsedData.cryptoCiphers.push({ cipherName, cipherScore });
     });
 }
 
 
-        // Extract crawled URLs
-        parsedData.crawledUrls = data['Audit Details']['Collected URLs'];
-
-        // Handle crypto ciphers
-        if (data['Audit Details']['crypto'] && data['Audit Details']['crypto']['ciphers']) {
-            data['Audit Details']['crypto']['ciphers'].forEach(cipherInfo => {
-                const [cipherName, cipherScore] = cipherInfo;
-                parsedData.cryptoCiphers.push({ cipherName, cipherScore });
-            });
-        }
-
         // Extract SSL certificate issuer and date
         parsedData.sslCertIssuer = data['Audit Details']['crypto']['sslCertInfo'][0];
-        parsedData.sslCertDate = data['Audit Details']['crypto']['sslCertInfo'][1];
+parsedData.sslCertDate = data['Audit Details']['crypto']['sslCertInfo'][1];
 
     } catch (err) {
         if (err.code === 'ENOENT') {
@@ -451,7 +489,6 @@ Object.entries(outdatedComponents).forEach(([componentName, componentInfo]) => {
 
     return parsedData;
 }
-parsedAuditData("audit_data.json")
 
 function formatTimestamp(timestamp) {
     try {
@@ -462,7 +499,7 @@ function formatTimestamp(timestamp) {
         const minutes = timestamp.substring(11, 13);
 
         // Create a new Date object with explicit time zone offset (+03 in this case)
-        const dateObj = new Date(Date.UTC(year, month, day, hours, minutes));
+        const dateObj = new Date(Date.UTC(year, month, day, hours-3, minutes));
         if (isNaN(dateObj)) {
             throw new Error('Invalid timestamp');
         }
@@ -549,21 +586,22 @@ async function saveAuditDataToDatabase(parsedData, userId) {
         console.log('Crawled URLs inserted successfully.');
 
         // Insert SSL certificate data into 'SSLCertificates' table
-        const sslCertInsertResult = await new Promise((resolve, reject) => {
-            pool.query(
-                'INSERT INTO SSLCertificates (site_id, issuer, valid_until) VALUES (?, ?, ?)',
-                [scanId, parsedData.sslCertIssuer, parsedData.sslCertDate],
-                (error, results, fields) => {
-                    if (error) {
-                        console.error('Error inserting SSL certificate data:', error);
-                        reject(error);
-                    } else {
-                        console.log('SSL certificate data inserted successfully.');
-                        resolve();
-                    }
-                }
-            );
-        });
+const sslCertInsertResult = await new Promise((resolve, reject) => {
+    pool.query(
+        'INSERT INTO SSLCertificates (site_id, issuer, valid_until) VALUES (?, ?, ?)',
+        [scanId, parsedData.sslCertIssuer, parsedData.sslCertDate], // Use values from sslCertInfo
+        (error, results, fields) => {
+            if (error) {
+                console.error('Error inserting SSL certificate data:', error);
+                reject(error);
+            } else {
+                console.log('SSL certificate data inserted successfully.');
+                resolve();
+            }
+        }
+    );
+});
+
 
         // Insert headers data into 'Headers' table
         const headersInsertPromises = parsedData.headerCheckResults.map(async (header) => {
