@@ -120,20 +120,20 @@ def main():
         arguments.url = arguments.url[:-1]
 
     max_depth = int(arguments.depth) if arguments.depth else 3
-
+    report = ReportGenerator(arguments.url)
     print("Crawling...")
     urls = Crawler.deep_crawl(arguments.url, max_depth=max_depth)
     print("Collected URLs:")
     for url in urls:
         print(url)
+    report.add_collected_urls(urls)
     sqlipayloads = []
     if arguments.sqlipayload:
         with open(arguments.sqlipayload, 'r') as file:
             sqlipayloads = file.read().splitlines()
-
     scan_types = arguments.scan_types.split(',') if arguments.scan_types else ['enum', 'headers', 'xss', 'sqli',
                                                                                'outdated', 'crypto']
-    report = ReportGenerator(arguments.url)
+
     perform_scans(arguments.quiet, arguments.url, urls, arguments.xsspayload, arguments.nohttps, sqlipayloads,
                   scan_types, report)
 

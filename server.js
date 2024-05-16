@@ -5,15 +5,18 @@
     const dev = process.env.NODE_ENV !== 'production';
     const nextApp = next({ dev });
     const cors = require('cors');
+    const cookieParser = require('cookie-parser');
     const http = require('http');
     const WebSocket = require('ws');
     const mysql = require('mysql');
     const bcrypt = require('bcrypt');
+    const axios = require('axios');
     let setup = false;
     const saltRounds = 10; // Number of salt rounds for hashing
     const session = require('express-session');
     const MySQLStore = require('express-mysql-session')(session);
     const crypto = require('crypto');
+    const fs = require("fs");
     const handle = nextApp.getRequestHandler();
     function generateRandomSessionSecret(length = 32) {
         // Generate random bytes
@@ -24,33 +27,74 @@
     }
 
     // Function to create a new user
-    async function createUser(username, email, password) {
+async function createUser(username, email, password) {
+    try {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         const newUser = {
             username,
             email,
             password_hash: hashedPassword
         };
-        await pool.query('INSERT INTO Users SET ?', newUser);
+        const result = await pool.query('INSERT INTO Users SET ?', newUser);
+        console.log("Created User " + newUser.username);
+        console.log("Database Insert Result:", result);
+        return result;
+        await pool.getConnection(async (connection) => {
+    try {
+        await connection.beginTransaction();
+        // Perform database operations
+        await connection.query('INSERT INTO Users SET ?', newUser);
+        await connection.commit();
+        console.log('Transaction committed successfully');
+    } catch (error) {
+        await connection.rollback();
+        console.error('Error performing database operations:', error);
+        throw new Error('Database transaction failed.');
+    } finally {
+        connection.release();
     }
+});
+
+    } catch (error) {
+        console.error('Error creating user:', error);
+        throw new Error('Failed to create user. Please try again.');
+    }
+}
+
+
 
 
     if(setup){
-        createUser('can', 'can@mail.com', 'can');
-        console.log("Created user")
+        createUser('bulent', 'bulent@mail.com', 'bulent')
+    .then(result => {
+        console.log('User created successfully:', result);
+    })
+    .catch(error => {
+        console.error('Error creating user:', error);
+    });
+
     }
 
 
 
     require('dotenv').config();
-const pool = mysql.createPool({
-  connectionLimit: 10, // Adjust this based on your application needs
-  host: process.env.host_ip,
-  port: 3306,
-  user: process.env.host_name,
-  password: process.env.host_pw,
-  database: process.env.db_name
-});
+try {
+  // Create a MySQL connection pool
+  pool = mysql.createPool({
+    connectionLimit: 10, // Adjust this based on your application needs
+    host: process.env.host_ip,
+    port: 3306,
+    user: process.env.host_name,
+    password: process.env.host_pw,
+    database: process.env.db_name
+  });
+
+  console.log('MySQL connection pool created successfully');
+} catch (error) {
+  console.error('Error creating MySQL connection pool:', error.message);
+}
+
+
 
 // Function to query the database
 function executeQuery(sql, values) {
@@ -82,7 +126,7 @@ async function getUserByUsername(username) {
         const wss = new WebSocket.Server({port: process.env.SOCKETPORT || 9000});
         const port = process.env.PORT || 8000;
         app.use(cors());
-
+app.use(cookieParser());
         app.use(bodyParser.json());
         const sessionStore = new MySQLStore({
             host: process.env.host_ip,
@@ -91,8 +135,8 @@ async function getUserByUsername(username) {
             password: process.env.host_pw,
             database: process.env.db_name,
             clearExpired: true,
-            checkExpirationInterval: 900000, // Cleanup expired sessions every 15 minutes
-            expiration: 86400000, // Session expires after 1 day (in milliseconds)
+            checkExpirationInterval: 300000, // Cleanup expired sessions every 15 minutes
+            expiration: 1800000, // Session expires after 1 day (in milliseconds)
         });
         const sessionSecret = generateRandomSessionSecret();
         app.use(session({
@@ -113,19 +157,21 @@ async function getUserByUsername(username) {
         });
     // Authentication middleware
     // Function to authenticate user
-       function requireLogin(req, res, next) {
-        if (req.session && req.session.user) {
-    // If user is logged in, redirect to another page (e.g., dashboard)
-    res.redirect('/');
-  } else {
-    // User is not logged in, proceed to next middleware or route handler
+function requireLogin(req, res, next) {
+  if (req.session && req.session.user) {
+    // User is authenticated, proceed to the next middleware
     next();
+  } else {
+    // User is not authenticated, redirect to login page
+    res.redirect('/login');
   }
 }
 
 
 
+
         app.post('/start-scan', requireLogin, (req, res) => {
+            const userId = req.cookies.userId;
             const {url, quiet, depth, xsspayload, nohttps, sqlipayload, scan_types} = req.body;
             if (!url) {
                 return res.status(400).json({error: 'URL is required'});
@@ -173,6 +219,28 @@ async function getUserByUsername(username) {
 
                     if (code === 0) {
                         res.json({message: 'Scan completed successfully'});
+                          const filename = "audit_data.json";
+    try {
+userId = req.cookies.userId;
+
+        if (!userId) {
+            return res.status(401).json({ error: 'User not authenticated' });
+        }
+
+    try {
+        const parsedData = parsedAuditData(filename);
+        console.log(parsedData)
+        console.log("Saving Data");
+        await saveAuditDataToDatabase(parsedData, userId);
+        res.json({ message: 'Audit data saved successfully' });
+    } catch (error) {
+        console.error('Error saving audit data:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+    } catch (error) {
+        console.error('Error checking authentication:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
                     } else {
                         res.status(500).json({error: 'An error occurred during scanning'});
                     }
@@ -184,48 +252,31 @@ async function getUserByUsername(username) {
             }
         });
 
-        app.get('/totalvulnerabilities', requireLogin, (req, res) => {
-            const query = 'SELECT COUNT(*) AS totalVulnerabilities FROM Vulnerabilities';
-            pool.query(query, (err, result) => {
-                if (err) {
-                    console.error('Error querying total vulnerabilities:', err);
-                    res.status(500).json({error: 'Internal server error'});
-                    return;
-                }
-                const totalVulnerabilities = result[0].totalVulnerabilities;
-                res.json({totalVulnerabilities});
-            });
-        });
-         app.get('/check-auth', requireLogin, (req, res) => {
-    // If requireLogin middleware passes, the user is authenticated
-    res.json({ authenticated: true, user: req.session.user });
-  });
 
-app.post('/login', requireLogin,async (req, res) => {
-  const { email, password } = req.body; // Ensure 'email' matches frontend data structure
-  console.log(`Received login request for email: ${email}`);
+
+// Endpoint to check if user is authenticated
+
+
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
 
   try {
     const results = await getUserByUsername(email);
-    console.log(`Query results for email ${email}:`, results);
 
     if (results.length === 0) {
-      console.log(`No user found for username: ${email}`);
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
     const user = results[0];
-    console.log(`User found:`, user);
-
     const isMatch = await bcrypt.compare(password, user.password_hash);
-    console.log(`Password match result: ${isMatch}`);
 
     if (isMatch) {
       req.session.user = user;
-      console.log(`User ${email} logged in successfully.`);
+        console.log('User Authenticated:', req.session && req.session.user); // Check user authentication status
+        res.cookie('userId', req.session.user.user_id, { maxAge: 86400000 }); // Cookie expires in 24 hours (in milliseconds)
       return res.status(200).json({ success: true, message: 'Login successful' });
+
     } else {
-      console.log(`Invalid password for username: ${email}`);
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
   } catch (error) {
@@ -233,40 +284,455 @@ app.post('/login', requireLogin,async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
-app.post('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error('Error destroying session:', err);
-      return res.status(500).json({ error: 'Internal server error' });
-    }
-    res.json({ success: true, message: 'Logout successful' });
-  });
+
+app.get('/check-auth', (req, res) => {
+  if (req.session && req.session.user) {
+    // If the session exists and user is logged in
+    res.json({ authenticated: true, user: req.session.user });
+  } else {
+    // No active session or user is not logged in
+    res.json({ authenticated: false });
+  }
 });
 
-        app.get('/totalscans', requireLogin, (req, res) => {
-            const query = 'SELECT COUNT(*) AS totalScans FROM Scans';
-            pool.query(query, (err, result) => {
+
+app.post('/logout', (req, res) => {
+    if (req.session) {
+        const sessionId = req.session.id;
+        req.session.destroy((err) => {
+            if (err) {
+                console.error('Error destroying session:', err);
+                return res.status(500).json({ error: 'Internal server error' });
+            }
+            // Manually remove session from session store
+            sessionStore.destroy(sessionId, (err) => {
                 if (err) {
-                    console.error('Error querying total scans:', err);
-                    res.status(500).json({error: 'Internal server error'});
-                    return;
+                    console.error('Error removing session from store:', err);
                 }
-                const totalScans = result[0].totalScans;
-                res.json({totalScans});
+                res.json({ success: true, message: 'Logout successful' });
             });
+        });
+    } else {
+        res.json({ success: true, message: 'Logout successful' });
+    }
+});
+function parsedAuditData(filename) {
+    let parsedData = {
+        siteUrl: '',
+        isHttps: false,
+        timestamp: '',
+        ipDetails: { hostname: '', ip: '' },
+        openPorts: [],
+        headerCheckResults: {},
+        clickjackingAlert: '',
+        crawledUrls: [],
+        xssVulnerabilities: [],
+        sqliVulnerabilities: [],
+        outdatedComponents: [],
+        cryptoCiphers: [],
+        sslCertIssuer: '',
+        sslCertDate: ''
+    };
+
+    try {
+        const fileData = fs.readFileSync(filename, 'utf8');
+        const data = JSON.parse(fileData);
+
+        // Populate parsedData with extracted data
+        parsedData.siteUrl = data.site_url || '';
+        parsedData.isHttps = parsedData.siteUrl.startsWith('https');
+        parsedData.timestamp = data.timestamp ? formatTimestamp(data.timestamp) : '';
+
+        const nmapReport = data['Audit Details']['enum']['details'][0];
+        const ipMatch = nmapReport.match(/Nmap scan report for (\S+) \((\d+\.\d+\.\d+\.\d+)\)/);
+        if (ipMatch) {
+            parsedData.ipDetails.hostname = ipMatch[1];
+            parsedData.ipDetails.ip = ipMatch[2];
+        }
+
+        // Extract open ports
+        const openPorts = nmapReport.matchAll(/(\d+)\/tcp\s+open\s+(\S+)/g);
+        for (const match of openPorts) {
+            const port = match[1];
+            const service = match[2];
+            parsedData.openPorts.push({ port, service });
+        }
+
+        // Extract SQLi vulnerabilities
+        if (data['Audit Details']['sqli']) {
+            data['Audit Details']['sqli'].forEach((sqli_vuln, index) => {
+                const sqliVulnerability = {
+                    url: sqli_vuln.URL,
+                    payload: sqli_vuln.Payload,
+                    type: sqli_vuln.Type
+                };
+                parsedData.sqliVulnerabilities.push(sqliVulnerability);
+            });
+        }
+
+        // Extract header check results and clickjacking alert
+        parsedData.headerCheckResults = data['Audit Details']['headerCheck'][parsedData.siteUrl] || {};
+        parsedData.clickjackingAlert = (data['Audit Details']['clickjacking'][parsedData.siteUrl] || [])[0];
+
+        // Handle outdated components
+const outdatedComponents = data['Audit Details']['outdated']['Detected Components'];
+Object.entries(outdatedComponents).forEach(([componentName, componentInfo]) => {
+    const component = {
+        componentName,
+        currentVersion: componentInfo['Current Version'],
+        latestVersion: componentInfo['Latest Version'],
+        status: componentInfo['Status'],
+        cveDetails: [] // Initialize an array to hold CVE details
+    };
+
+    // Check if CVE entries exist for the current component
+    if (componentName in data['Audit Details']['outdated']['cve']) {
+        const cveEntries = data['Audit Details']['outdated']['cve'][componentName];
+
+        // Iterate over each CVE entry and push to cveDetails array
+        Object.entries(cveEntries).forEach(([cveId, cveDescription]) => {
+            const cveDetail = {
+                cveId,
+                cveDescription
+            };
+
+            component.cveDetails.push(cveDetail);
         });
 
-        app.get('/lastscannedwebsites', requireLogin, (req, res) => {
-            const query = 'SELECT name, pdfLink, date FROM Scans ORDER BY date DESC LIMIT 5';
-            pool.query(query, (err, results) => {
-                if (err) {
-                    console.error('Error querying last scanned websites:', err);
-                    res.status(500).json({error: 'Internal server error'});
-                    return;
-                }
-                res.json(results);
+    }
+
+    parsedData.outdatedComponents.push(component);
+});
+
+
+        // Extract XSS vulnerabilities
+        if (data['Audit Details']['Xss Vulnerabilties']) {
+    data['Audit Details']['Xss Vulnerabilties'].forEach(xssVuln => {
+        const inputs = xssVuln.details.inputs.map(input => ({
+            type: input.type,
+            name: input.name,
+            value: input.value
+        }));
+
+        const vulnerability = {
+            url: xssVuln.url,
+            inputs: inputs,
+            action: xssVuln.details.action,
+            method: xssVuln.details.method,
+            payload: xssVuln.payload
+        };
+        parsedData.xssVulnerabilities.push(vulnerability);
+    });
+}
+
+
+        // Extract crawled URLs
+        parsedData.crawledUrls = data['Audit Details']['Collected URLs'];
+
+        // Handle crypto ciphers
+        if (data['Audit Details']['crypto'] && data['Audit Details']['crypto']['ciphers']) {
+            data['Audit Details']['crypto']['ciphers'].forEach(cipherInfo => {
+                const [cipherName, cipherScore] = cipherInfo;
+                parsedData.cryptoCiphers.push({ cipherName, cipherScore });
             });
+        }
+
+        // Extract SSL certificate issuer and date
+        parsedData.sslCertIssuer = data['Audit Details']['crypto']['sslCertInfo'][0];
+        parsedData.sslCertDate = data['Audit Details']['crypto']['sslCertInfo'][1];
+
+    } catch (err) {
+        if (err.code === 'ENOENT') {
+            console.log(`Error: File '${filename}' not found.`);
+        } else {
+            console.log(`Error: An unexpected error occurred: ${err}`);
+        }
+    }
+
+    return parsedData;
+}
+parsedAuditData("audit_data.json")
+
+function formatTimestamp(timestamp) {
+    try {
+        const year = timestamp.substring(0, 4);
+        const month = timestamp.substring(4, 6) - 1; // Month is 0-based in Date object (0 = January)
+        const day = timestamp.substring(6, 8);
+        const hours = timestamp.substring(9, 11);
+        const minutes = timestamp.substring(11, 13);
+
+        // Create a new Date object with explicit time zone offset (+03 in this case)
+        const dateObj = new Date(Date.UTC(year, month, day, hours, minutes));
+        if (isNaN(dateObj)) {
+            throw new Error('Invalid timestamp');
+        }
+
+        // Adjust the time zone offset to match the desired timezone (e.g., +03)
+        const localDateObj = new Date(dateObj.getTime() + (3 * 60 * 60 * 1000)); // +03:00 in milliseconds
+
+        return localDateObj.toISOString().replace('T', ' ').split('.')[0];
+    } catch (error) {
+        console.log(`Error formatting timestamp: ${error}`);
+        return ''; // or handle the error as per your requirement
+    }
+}
+
+
+
+
+function getCurrentUserId(req) {
+    if (req.session && req.session.user) {
+        return req.session.user.id; // Assuming 'id' is the field in 'user' object that holds user ID
+    }
+    return null; // Return null if user is not authenticated
+}
+async function saveAuditDataToDatabase(parsedData, userId) {
+    let scanId;
+    let siteUrl = parsedData.siteUrl;
+    let scan_timestamp = parsedData.timestamp;
+
+    try {
+        const scanInsertResult = await new Promise((resolve, reject) => {
+            pool.query(
+                'INSERT INTO Scans (user_id, scan_timestamp, target_url) VALUES (?, ?, ?)',
+                [userId, scan_timestamp, siteUrl],
+                (error, results, fields) => {
+                    if (error) {
+                        console.error('Error inserting data into Scans table:', error);
+                        reject(error);
+                    } else {
+                        console.log('Scan data inserted successfully.');
+                        scanId = results.insertId;
+                        resolve();
+                    }
+                }
+            );
         });
+
+        // Stringify openPorts array for open_ports_name column
+        const openPortsJson = JSON.stringify(parsedData.openPorts);
+
+        // Insert scanned site data into ScannedSites
+        const scannedSiteInsertResult = await new Promise((resolve, reject) => {
+            pool.query(
+                'INSERT INTO ScannedSites (scan_id, is_https, ip_address, open_ports) VALUES (?, ?, ?, ?)',
+                [scanId, parsedData.isHttps, parsedData.ipDetails.ip, openPortsJson],
+                (error, results, fields) => {
+                    if (error) {
+                        console.error('Error inserting data into ScannedSites table:', error);
+                        reject(error);
+                    } else {
+                        console.log('Scanned site data inserted successfully.');
+                        resolve();
+                    }
+                }
+            );
+        });
+
+        // Insert individual port data into open_port column (if needed)
+        const insertIndividualPortsPromises = parsedData.openPorts.map(async (portData) => {
+            await pool.query(
+                'INSERT INTO ScannedSites (scan_id, open_port) VALUES (?, ?)',
+                [scanId, `${portData.port} (${portData.service})`]
+            );
+        });
+        await Promise.all(insertIndividualPortsPromises);
+
+        console.log('Scanned site inserted successfully.');
+
+        // Insert crawled URLs
+        const crawledUrlsInsertPromises = parsedData.crawledUrls.map(async (url) => {
+            await pool.query('INSERT INTO CrawledUrls (url, scan_id) VALUES (?, ?)', [url, scanId]);
+        });
+        await Promise.all(crawledUrlsInsertPromises);
+
+        console.log('Crawled URLs inserted successfully.');
+
+        // Insert SSL certificate data into 'SSLCertificates' table
+        const sslCertInsertResult = await new Promise((resolve, reject) => {
+            pool.query(
+                'INSERT INTO SSLCertificates (site_id, issuer, valid_until) VALUES (?, ?, ?)',
+                [scanId, parsedData.sslCertIssuer, parsedData.sslCertDate],
+                (error, results, fields) => {
+                    if (error) {
+                        console.error('Error inserting SSL certificate data:', error);
+                        reject(error);
+                    } else {
+                        console.log('SSL certificate data inserted successfully.');
+                        resolve();
+                    }
+                }
+            );
+        });
+
+        // Insert headers data into 'Headers' table
+        const headersInsertPromises = parsedData.headerCheckResults.map(async (header) => {
+            const headerName = header.split("'")[1]; // Extract header name from the error message
+            await pool.query(
+                'INSERT INTO Headers (site_id, header_name, is_missing, clickjacking) VALUES (?, ?, ?, ?)',
+                [scanId, headerName, true, parsedData.clickjackingAlert === 'Possible clickjacking vulnerability detected.']
+            );
+        });
+        await Promise.all(headersInsertPromises);
+
+//XSS
+      const vulnerabilitiesInsertPromises = parsedData.xssVulnerabilities.map(async (vulnerability) => {
+    try {
+        const { payload, action, method, inputs, url } = vulnerability;
+
+        if (payload && action && method && url) {
+            const insertQuery = `
+                INSERT INTO Vulnerabilities 
+                (scan_id, vulnerability_type, payload, action, method, sqlitype, Inputs, url) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `;
+
+            await pool.query(insertQuery, [
+                scanId,
+                "XSS",
+                payload,
+                action,
+                method,
+                null,
+                JSON.stringify(inputs || {}),
+                url
+            ]);
+        } else {
+            console.error('Error: Missing required properties in XSS vulnerability data.');
+        }
+    } catch (error) {
+        console.error('Error inserting XSS vulnerability:', error);
+        throw error; // Rethrow the error to propagate it
+    }
+});
+
+
+        // Insert outdated components
+        const outdatedComponentsInsertPromises = parsedData.outdatedComponents.map(async (component) => {
+            try {
+                const cveId = component.cveDetails && component.cveDetails[0] && component.cveDetails[0].cveId;
+                const cveDescription = component.cveDetails && component.cveDetails[0] && component.cveDetails[0].cveDescription;
+
+                await pool.query('INSERT INTO OutdatedComponents (scan_id, component_name, current_version, latest_version, status, cve_id, cve_description) VALUES (?, ?, ?, ?, ?, ?, ?)', [
+                    scanId,
+                    component.componentName,
+                    component.currentVersion,
+                    component.latestVersion,
+                    component.status,
+                    cveId || null,
+                    cveDescription || null,
+                ]);
+            } catch (error) {
+                console.error('Error inserting outdated component:', error);
+                throw error; // Rethrow the error to propagate it
+            }
+        });
+
+        const sqliInsertPromises = parsedData.sqliVulnerabilities.map(async (vulnerability) => {
+    try {
+        const { payload, url, type } = vulnerability;
+
+        if (payload && url && type) {
+            const insertQuery = `
+                INSERT INTO Vulnerabilities 
+                (scan_id, vulnerability_type, payload, action, method, sqlitype, Inputs, url) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `;
+
+            await pool.query(insertQuery, [
+                scanId,
+                "SQLI",
+                payload,
+                null,  // Since SQLI vulnerabilities may not have action or method
+                null,
+                type,
+                null,  // Inputs can be null for SQLI
+                url
+            ]);
+
+            console.log('SQLI vulnerability inserted successfully.');
+        } else {
+            console.error('Error: Missing required properties in SQLI vulnerability data.');
+        }
+    } catch (error) {
+        console.error('Error inserting SQLI vulnerability:', error);
+        // Rethrow the error to propagate it, or handle it as needed
+        throw error;
+    }
+});
+
+
+          const cryptoCiphersInsertPromises = parsedData.cryptoCiphers.map(async (cipher) => {
+              try {
+                  await pool.query(
+                      'INSERT INTO CryptoCiphers (scan_id, cipher_name, cipher_score) VALUES (?, ?, ?)',
+                      [scanId, cipher.cipherName, cipher.cipherScore]
+                  );
+              }catch (error) {
+                  console.error('Error inserting CryptoCiphers data.');
+              }
+          })
+        try {
+    await Promise.all([
+        ...vulnerabilitiesInsertPromises,
+        ...sqliInsertPromises,
+        ...cryptoCiphersInsertPromises
+    ]);
+    console.log('All vulnerabilities inserted successfully.');
+} catch (error) {
+    console.error('Error inserting vulnerability data:', error);
+}
+}
+catch (error){
+    console.log("Error inserting vulnerability data:", error);
+    }
+}
+        app.get('/totalscans', requireLogin, (req, res) => {
+    const query = 'SELECT COUNT(*) AS totalScans FROM Scans';
+
+    pool.query(query, (err, result) => {
+        if (err) {
+            console.error('Error querying total scans:', err);
+            res.status(500).json({ error: 'Internal server error' });
+            return;
+        }
+
+        // Check if result is empty or undefined
+        if (!result || !result[0] || !result[0].totalScans) {
+            console.error('No total scans found in the result');
+            res.status(404).json({ error: 'Total scans not found' });
+            return;
+        }
+
+        const totalScans = result[0].totalScans;
+        console.log("Total Scans: " + totalScans)
+        res.json({ totalScans });
+    });
+});
+
+        app.get('/totalvulnerabilities', requireLogin, (req, res) => {
+    const query = 'SELECT COUNT(*) AS totalVulnerabilities FROM Vulnerabilities';
+
+    pool.query(query, (err, result) => {
+        if (err) {
+            console.error('Error querying total vulnerabilities:', err);
+            res.status(500).json({ error: 'Internal server error' });
+            return;
+        }
+
+        // Check if result is empty or undefined
+        if (!result || !result[0] || !result[0].totalVulnerabilities) {
+            console.error('No total vulnerabilities found in the result');
+            res.status(404).json({ error: 'Total vulnerabilities not found' });
+            return;
+        }
+
+        const totalVulnerabilities = result[0].totalVulnerabilities;
+        console.log("Total Vulnerabilities: " + totalVulnerabilities)
+        res.json({ totalVulnerabilities });
+    });
+});
+
 
         app.all('*', (req, res) => {
         // Check if user is authenticated

@@ -21,15 +21,15 @@ function DataFetcher(): ReactElement {
     const fetchData = async () => {
         try {
             // Fetch total scans
-            const totalScansResponse = await axios.get('http://localhost:5000/total-scans');
+            const totalScansResponse = await axios.get('http://localhost:8000/totalscans');
             setTotalScans(totalScansResponse.data.totalScans);
 
             // Fetch total vulnerabilities
-            const totalVulnerabilitiesResponse = await axios.get('http://localhost:5000/total-vulnerabilities');
+            const totalVulnerabilitiesResponse = await axios.get('http://localhost:8000/totalvulnerabilities');
             setTotalVulnerabilities(totalVulnerabilitiesResponse.data.totalVulnerabilities);
 
             // Fetch last scanned websites
-            const lastScannedWebsitesResponse = await axios.get('http://localhost:5000/last-scanned-websites');
+            const lastScannedWebsitesResponse = await axios.get('http://localhost:8000/lastscanned5websites');
             setLastScannedWebsites(lastScannedWebsitesResponse.data.lastScannedWebsites);
         } catch (error) {
             console.error('Error fetching data:', error);

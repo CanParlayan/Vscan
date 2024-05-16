@@ -5,6 +5,7 @@ const ClientComponent: React.FC = () => {
   const [url, setUrl] = useState("");
   const [isScanning, setIsScanning] = useState(false);
   const [scanOutput, setScanOutput] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(event.target.value);
@@ -32,20 +33,13 @@ const ClientComponent: React.FC = () => {
     <div className="scan-container">
       <input
         type="text"
-        className="url"
-        id="urlInput"
         placeholder="Enter URL"
         value={url}
         onChange={handleInputChange}
       />
-      <button
-        className="scanbutton"
-        onClick={startScan}
-        disabled={isScanning}
-      >
+      <button onClick={startScan} disabled={isScanning}>
         {isScanning ? "Scanning..." : "Start Scan"}
       </button>
-
       {scanOutput && (
         <div className="output-container">
           <h3>Scan Output:</h3>

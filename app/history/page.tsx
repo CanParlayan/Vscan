@@ -1,46 +1,47 @@
-import Logo from "../components/logo";
-import "./style.css";
+"use client";
 import React, { useEffect, useState } from "react";
+import Logo from "../components/logo";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import axios from "axios";
 
-export default function history() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
-  const lastScannedWebsites = [
-    { name: "Website 1", pdfLink: "link1.pdf", date: "2023-03-01" },
-    { name: "Website 2", pdfLink: "link2.pdf", date: "2023-02-15" },
-    { name: "Website 3", pdfLink: "link3.pdf", date: "2023-02-28" },
-    { name: "Website 4", pdfLink: "link4.pdf", date: "2023-03-05" },
-    { name: "Website 5", pdfLink: "link5.pdf", date: "2023-02-20" },
-    { name: "Website 6", pdfLink: "link6.pdf", date: "2023-03-02" },
-    { name: "Website 7", pdfLink: "link7.pdf", date: "2023-03-10" },
-    { name: "Website 8", pdfLink: "link8.pdf", date: "2023-02-25" },
-    { name: "Website 9", pdfLink: "link9.pdf", date: "2023-03-15" },
-    { name: "Website 10", pdfLink: "link10.pdf", date: "2023-02-18" },
-    { name: "Website 1", pdfLink: "link1.pdf", date: "2023-03-01" },
-    { name: "Website 2", pdfLink: "link2.pdf", date: "2023-02-15" },
-    { name: "Website 3", pdfLink: "link3.pdf", date: "2023-02-28" },
-    { name: "Website 4", pdfLink: "link4.pdf", date: "2023-03-05" },
-    { name: "Website 5", pdfLink: "link5.pdf", date: "2023-02-20" },
-    { name: "Website 6", pdfLink: "link6.pdf", date: "2023-03-02" },
-    { name: "Website 7", pdfLink: "link7.pdf", date: "2023-03-10" },
-    { name: "Website 8", pdfLink: "link8.pdf", date: "2023-02-25" },
-    { name: "Website 9", pdfLink: "link9.pdf", date: "2023-03-15" },
-    { name: "Website 10", pdfLink: "link10.pdf", date: "2023-02-18" },
-  ];
+const History = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [lastScannedWebsites, setLastScannedWebsites] = useState([]);
 
-  const reversedData = lastScannedWebsites.reverse();
+  // Function to fetch last scanned websites data
+  const fetchLastScannedWebsites = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/last-scanned");
+      setLastScannedWebsites(response.data);
+    } catch (error) {
+      console.error("Error fetching last scanned websites:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Check authentication status when component mounts
+    const checkAuthStatus = async () => {
+      try {
+        const response = await axios.get("/check-auth");
+        const { authenticated } = response.data;
+        setIsLoggedIn(authenticated);
+      } catch (error) {
+        console.error("Error checking authentication status:", error);
+      }
+    };
+
+    checkAuthStatus();
+    fetchLastScannedWebsites();
+  }, []);
 
   const handleLoginClick = () => {
     if (isLoggedIn) {
       // Perform logout actions
-      setIsLoggedIn(false); // Set isLoggedIn to false
-      // Clear any session-related data or perform additional cleanup
-      // For example, clear local storage or session storage
-      localStorage.removeItem("accessToken"); // Example of clearing access token from local storage
-      // Redirect to the login page
-      window.location.href = "/login";
+      setIsLoggedIn(false);
+      localStorage.removeItem("accessToken"); // Clear stored token
+      window.location.href = "/login"; // Redirect to login page
     } else {
-      // Navigate to login page if not logged in
+      // Redirect to login page if not logged in
       window.location.href = "/login";
     }
   };
@@ -93,18 +94,17 @@ export default function history() {
             <h2 className="title">Last Scanned Websites</h2>
             <div className="last-scanned-container">
               <div className="last-scanned-list">
-                {reversedData.map(({ name, pdfLink, date }, index) => (
+                {lastScannedWebsites.map((website, index) => (
                   <div key={index} className="last-scanned-item">
-                    <span>{name}</span>
-                    <span className="date">{date}</span>
+                    <span>{website.name}</span>
+                    <span className="date">{website.date}</span>
                     <a
-                      href={pdfLink}
+                      href={website.pdfLink}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="pdf-link"
                     >
-                      <i className="fas fa-image"></i>
-                      PDF
+                      <i className="fas fa-image"></i> PDF
                     </a>
                   </div>
                 ))}
@@ -115,4 +115,6 @@ export default function history() {
       </body>
     </html>
   );
-}
+};
+
+export default History;

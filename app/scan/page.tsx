@@ -45,6 +45,7 @@ const ScanPage = () => {
   };
 
   useEffect(() => {
+
     const socket = new WebSocket("ws://localhost:9000");
 
     socket.onopen = () => {
@@ -70,24 +71,30 @@ const ScanPage = () => {
   const handleLoginClick = () => {
     if (isLoggedIn) {
       // Perform logout actions
-      setIsLoggedIn(false); // Set isLoggedIn to false
-      // Clear any session-related data or perform additional cleanup
-      // For example, clear local storage or session storage
-      localStorage.removeItem("accessToken"); // Example of clearing access token from local storage
-      // Redirect to the login page
-      window.location.href = "/login";
+      setIsLoggedIn(false);
+      localStorage.removeItem("accessToken"); // Clear stored token
+      window.location.href = "/login"; // Redirect to login page
     } else {
-      // Navigate to login page if not logged in
+      // Redirect to login page if not logged in
       window.location.href = "/login";
     }
   };
 
   // Redirect to login page if not logged in
   useEffect(() => {
-    if (!isLoggedIn) {
-      window.location.href = "/login";
+  // Check authentication status
+  const checkAuthStatus = async () => {
+    try {
+      const response = await axios.get("/check-auth");
+      const { authenticated } = response.data;
+      setIsLoggedIn(authenticated);
+    } catch (error) {
+      console.error("Error checking authentication status:", error);
     }
-  }, [isLoggedIn]);
+  };
+
+  checkAuthStatus();
+}, []);
 
   // Adjust startScan function to handle scan response
   const startScan = async () => {
@@ -96,8 +103,11 @@ const ScanPage = () => {
       const response = await axios.post("http://localhost:8000/start-scan", {
         url,
         ...flags,
-      });
-      console.log(response.data.message); // Log server response message
+      });const { stdout, message } = response.data;
+      if (stdout) {
+        setScanOutput(stdout);
+      }
+      console.log(message);
     } catch (error) {
       console.error("Error:", error);
     } finally {

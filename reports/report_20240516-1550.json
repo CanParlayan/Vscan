@@ -1,0 +1,25 @@
+{
+  "site_url": "http://jetsms.net",
+  "timestamp": "20240516-1550",
+  "Audit Details": {
+    "crypto": {
+      "ciphers": [
+        [
+          "TLS_RSA_WITH_3DES_EDE_CBC_SHA",
+          "C"
+        ],
+        [
+          "TLS_RSA_WITH_3DES_EDE_CBC_SHA",
+          "C"
+        ]
+      ],
+      "sslCertInfo": [
+        "Sectigo RSA Domain Validation Secure Server CA",
+        "2025-02-05T23:59:59"
+      ]
+    }
+  },
+  "Collected URLs": [
+    "http://jetsms.net"
+  ]
+}

@@ -8,10 +8,12 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // State for login status
   // Event handler for email input change
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
   setEmail(e.target.value);
 };
+
 
 const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
   setPassword(e.target.value);
@@ -20,24 +22,25 @@ const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
 
   // Form submission handler
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-  e.preventDefault(); // Prevent default form submission behavior
+  e.preventDefault();
   try {
     const response = await fetch('/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }), // Sending 'email' and 'password'
+      body: JSON.stringify({ email, password }),
     });
 
     const data = await response.json();
 
     if (data.success) {
+      setIsLoggedIn(true); // Set isLoggedIn to true upon successful login
       window.location.href = '/'; // Redirect on successful login
     } else {
-      setLoginError(data.message); // Set login error message
+      setLoginError(data.message);
     }
   } catch (error) {
     console.error('Error during login:', error);
-    // Handle error (e.g., display generic error message)
+    // Handle error
   }
 };
 
