@@ -65,7 +65,7 @@ async function createUser(username, email, password) {
 
 
     if(setup){
-        createUser('bulent', 'bulent@mail.com', 'bulent')
+        createUser('can', 'can@mail.com', 'can')
     .then(result => {
         console.log('User created successfully:', result);
     })
@@ -180,6 +180,7 @@ app.post('/start-scan', requireLogin, async (req, res) => {
     const formattedStartDate = formatDate(startDate);
     console.log('Scan started at:', formattedStartDate);
     const filename = "report_"+formattedStartDate+".json"
+    const pdffilename = "report_"+formattedStartDate+".pdf"
     const pythonPath = 'C:\\Users\\hcparlayan\\AppData\\Local\\Programs\\Python\\Python312\\python';  //will be added to .env
             const scriptPath = 'C:\\Users\\hcparlayan\\WebstormProjects\\OWASP-Top-Scanner3\\main.py'; //will be added to .env
 
@@ -205,48 +206,40 @@ app.post('/start-scan', requireLogin, async (req, res) => {
             output.split('\n').forEach((line) => {
                 wss.clients.forEach((client) => {
                     if (client.readyState === WebSocket.OPEN) {
-                        client.send(JSON.stringify({ type: 'scan_output', message: line }));
+                        client.send(JSON.stringify({type: 'scan_output', message: line}));
                     }
                 });
             });
         });
 
         pythonProcess.stderr.on('data', (data) => {
-    const errorOutput = data.toString().trim();
-    console.error('Python error:', errorOutput);
-});
+            const errorOutput = data.toString().trim();
+            console.error('Python error:', errorOutput);
+        });
         pythonProcess.on('close', async (code) => { // Make the callback async
             console.log('Python process exited with code:', code);
             const message = code === 0 ? 'Scan completed successfully' : `Scan failed with exit code ${code}`;
 
             wss.clients.forEach((client) => {
                 if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({ type: 'scan_output', message }));
+                    client.send(JSON.stringify({type: 'scan_output', message}));
                 }
             });
 
             if (code === 0) {
-                res.json({ message: 'Scan completed successfully' });
+                res.json({message: 'Scan completed successfully'});
                 try {
-                    reports_path="C:\\Users\\hcparlayan\\WebstormProjects\\OWASP-Top-Scanner3\\reports\\"
-                    console.log(reports_path+filename)
-                    const parsedData = parsedAuditData(reports_path+filename);
-                    console.log(parsedData);
-                    console.log("Saving Data");
-                    await saveAuditDataToDatabase(parsedData, userId);
-                    res.json({ message: 'Audit data saved successfully' });
+                    reports_path = "C:\\Users\\hcparlayan\\WebstormProjects\\OWASP-Top-Scanner3\\reports\\"
+                    const parsedData = parsedAuditData(reports_path + filename);
+                    const pdf = reports_path + pdffilename;
+                    await saveAuditDataToDatabase(parsedData, userId,pdf);
                 } catch (error) {
-                    console.error('Error saving audit data:', error);
-                    res.status(500).json({ error: 'Internal server error' });
-                }
-            } else {
-                res.status(500).json({ error: 'An error occurred during scanning' });
-            }
-        });
-
-    } catch (error) {
-        console.error('Error spawning Python process:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('Error starting scan:', error);
+    }
+});
+        })
+    }catch (error){
+        console.error('Error starting scan:', error.message);
     }
 });
 function formatDate(date) {
@@ -274,10 +267,9 @@ app.get('/db', async (req, res) => {
         console.log(parsedData);
         console.log("Saving Data");
         await saveAuditDataToDatabase(parsedData, userId);
-        res.json({ message: 'Audit data saved successfully' });
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: 'Error saving audit data' });
+        } catch (error) {
+        console.error('Error starting scan:', error);
+        res.status(500).json({ error: 'Scan process failed' }); // Handle errors gracefully
     }
 });
 
@@ -414,8 +406,13 @@ const auditDetails = data['Audit Details'];
         }
 
         // Extract header check results and clickjacking alert
-        parsedData.headerCheckResults = data['Audit Details']['headerCheck'][parsedData.siteUrl] || {};
-        parsedData.clickjackingAlert = (data['Audit Details']['clickjacking'][parsedData.siteUrl] || [])[0];
+        if (data['Audit Details'] && data['Audit Details']['headerCheck']) {
+    parsedData.headerCheckResults = data['Audit Details']['headerCheck'][parsedData.siteUrl] || {};
+}
+if (data['Audit Details'] && data['Audit Details']['clickjacking']) {
+    parsedData.clickjackingAlert = (data['Audit Details']['clickjacking'][parsedData.siteUrl] || [])[0];
+}
+
 
         // Handle outdated components
 const outdatedComponents = auditDetails?.outdated?.['Detected Components'] || {};
@@ -523,12 +520,33 @@ function getCurrentUserId(req) {
     }
     return null; // Return null if user is not authenticated
 }
-async function saveAuditDataToDatabase(parsedData, userId) {
+async function saveAuditDataToDatabase(parsedData, userId,reportFilePath) {
     let scanId;
     let siteUrl = parsedData.siteUrl;
     let scan_timestamp = parsedData.timestamp;
+    let vulnerabilityInsertPromises = [];
+
 
     try {
+        const userExists = await new Promise((resolve, reject) => {
+    pool.query(
+        'SELECT user_id FROM Users WHERE user_id = ?',
+        [userId],
+        (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results.length > 0); // Check if user with given ID exists
+            }
+        }
+    );
+});
+
+if (!userExists) {
+    console.error(`Error: User with user_id ${userId} does not exist.`);
+    // Handle the error (e.g., throw an error or return from function)
+    return;
+}
         const scanInsertResult = await new Promise((resolve, reject) => {
             pool.query(
                 'INSERT INTO Scans (user_id, scan_timestamp, target_url) VALUES (?, ?, ?)',
@@ -549,8 +567,7 @@ async function saveAuditDataToDatabase(parsedData, userId) {
         // Stringify openPorts array for open_ports_name column
         const openPortsJson = JSON.stringify(parsedData.openPorts);
 
-        // Insert scanned site data into ScannedSites
-        const scannedSiteInsertResult = await new Promise((resolve, reject) => {
+        await new Promise((resolve, reject) => {
             pool.query(
                 'INSERT INTO ScannedSites (scan_id, is_https, ip_address, open_ports) VALUES (?, ?, ?, ?)',
                 [scanId, parsedData.isHttps, parsedData.ipDetails.ip, openPortsJson],
@@ -563,168 +580,199 @@ async function saveAuditDataToDatabase(parsedData, userId) {
                         resolve();
                     }
                 }
-            );
-        });
+            );});
+         console.log('Scanned site data inserted successfully.');
 
-        // Insert individual port data into open_port column (if needed)
-        const insertIndividualPortsPromises = parsedData.openPorts.map(async (portData) => {
-            await pool.query(
-                'INSERT INTO ScannedSites (scan_id, open_port) VALUES (?, ?)',
-                [scanId, `${portData.port} (${portData.service})`]
-            );
-        });
-        await Promise.all(insertIndividualPortsPromises);
-
-        console.log('Scanned site inserted successfully.');
-
-        // Insert crawled URLs
-        const crawledUrlsInsertPromises = parsedData.crawledUrls.map(async (url) => {
-            await pool.query('INSERT INTO CrawledUrls (url, scan_id) VALUES (?, ?)', [url, scanId]);
-        });
-        await Promise.all(crawledUrlsInsertPromises);
+        // Insert crawled URLs into 'CrawledUrls' table
+        for (const url of parsedData.crawledUrls) {
+            await new Promise((resolve, reject) => {
+                pool.query(
+                    'INSERT INTO CrawledUrls (url, scan_id) VALUES (?, ?)',
+                    [url, scanId],
+                    (error, results, fields) => {
+                        if (error) {
+                            console.error('Error inserting crawled URL data into CrawledUrls table:', error);
+                            reject(error);
+                        } else {
+                            resolve();
+                        }
+                    }
+                );
+            });
+        }
 
         console.log('Crawled URLs inserted successfully.');
 
         // Insert SSL certificate data into 'SSLCertificates' table
-const sslCertInsertResult = await new Promise((resolve, reject) => {
-    pool.query(
-        'INSERT INTO SSLCertificates (site_id, issuer, valid_until) VALUES (?, ?, ?)',
-        [scanId, parsedData.sslCertIssuer, parsedData.sslCertDate], // Use values from sslCertInfo
-        (error, results, fields) => {
-            if (error) {
-                console.error('Error inserting SSL certificate data:', error);
-                reject(error);
-            } else {
-                console.log('SSL certificate data inserted successfully.');
-                resolve();
-            }
-        }
-    );
-});
-
-
-        // Insert headers data into 'Headers' table
-        const headersInsertPromises = parsedData.headerCheckResults.map(async (header) => {
-            const headerName = header.split("'")[1]; // Extract header name from the error message
-            await pool.query(
-                'INSERT INTO Headers (site_id, header_name, is_missing, clickjacking) VALUES (?, ?, ?, ?)',
-                [scanId, headerName, true, parsedData.clickjackingAlert === 'Possible clickjacking vulnerability detected.']
+// Insert SSL certificate data into 'SSLCertificates' table
+        await new Promise((resolve, reject) => {
+            pool.query(
+                'INSERT INTO SSLCertificates (site_id, issuer, valid_until) VALUES (?, ?, ?)',
+                [scanId, parsedData.sslCertIssuer, parsedData.sslCertDate],
+                (error, results, fields) => {
+                    if (error) {
+                        console.error('Error inserting SSL certificate data:', error);
+                        reject(error);
+                    } else {
+                        console.log('SSL certificate data inserted successfully.');
+                        resolve();
+                    }
+                }
             );
         });
-        await Promise.all(headersInsertPromises);
 
-//XSS
-      const vulnerabilitiesInsertPromises = parsedData.xssVulnerabilities.map(async (vulnerability) => {
-    try {
-        const { payload, action, method, inputs, url } = vulnerability;
-
-        if (payload && action && method && url) {
-            const insertQuery = `
-                INSERT INTO Vulnerabilities 
-                (scan_id, vulnerability_type, payload, action, method, sqlitype, Inputs, url) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            `;
-
-            await pool.query(insertQuery, [
-                scanId,
-                "XSS",
-                payload,
-                action,
-                method,
-                null,
-                JSON.stringify(inputs || {}),
-                url
-            ]);
-        } else {
-            console.error('Error: Missing required properties in XSS vulnerability data.');
-        }
-    } catch (error) {
-        console.error('Error inserting XSS vulnerability:', error);
-        throw error; // Rethrow the error to propagate it
+        // Insert headers data into 'Headers' table
+        // Iterate over keys of headerCheckResults object
+for (const headerName in parsedData.headerCheckResults) {
+    if (parsedData.headerCheckResults.hasOwnProperty(headerName)) {
+        await new Promise((resolve, reject) => {
+            pool.query(
+                'INSERT INTO Headers (site_id, header_name, is_missing, clickjacking) VALUES (?, ?, ?, ?)',
+                [scanId, headerName, true, parsedData.clickjackingAlert === 'Possible clickjacking vulnerability detected.'],
+                (error, results, fields) => {
+                    if (error) {
+                        console.error('Error inserting header data into Headers table:', error);
+                        reject(error);
+                    } else {
+                        resolve();
+                    }
+                }
+            );
+        });
     }
-});
+}
 
 
-        // Insert outdated components
-        const outdatedComponentsInsertPromises = parsedData.outdatedComponents.map(async (component) => {
-            try {
-                const cveId = component.cveDetails && component.cveDetails[0] && component.cveDetails[0].cveId;
-                const cveDescription = component.cveDetails && component.cveDetails[0] && component.cveDetails[0].cveDescription;
-
-                await pool.query('INSERT INTO OutdatedComponents (scan_id, component_name, current_version, latest_version, status, cve_id, cve_description) VALUES (?, ?, ?, ?, ?, ?, ?)', [
-                    scanId,
-                    component.componentName,
-                    component.currentVersion,
-                    component.latestVersion,
-                    component.status,
-                    cveId || null,
-                    cveDescription || null,
-                ]);
-            } catch (error) {
-                console.error('Error inserting outdated component:', error);
-                throw error; // Rethrow the error to propagate it
+        // Insert XSS vulnerabilities into 'Vulnerabilities' table
+        for (const vulnerability of parsedData.xssVulnerabilities) {
+            const {payload, action, method, inputs, url} = vulnerability;
+            if (payload && action && method && url) {
+                await new Promise((resolve, reject) => {
+                    pool.query(
+                        'INSERT INTO Vulnerabilities (scan_id, vulnerability_type, payload, action, method, sqlitype, Inputs, url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                        [scanId, "XSS", payload, action, method, null, JSON.stringify(inputs || {}), url],
+                        (error, results, fields) => {
+                            if (error) {
+                                console.error('Error inserting XSS vulnerability:', error);
+                                reject(error);
+                            } else {
+                                resolve();
+                            }
+                        }
+                    );
+                });
+            } else {
+                console.error('Error: Missing required properties in XSS vulnerability data.');
             }
+        }
+         parsedData.outdatedComponents.forEach((component) => {
+            const { cveDetails, componentName, currentVersion, latestVersion, status } = component;
+            const cveId = cveDetails && cveDetails[0] && cveDetails[0].cveId;
+            const cveDescription = cveDetails && cveDetails[0] && cveDetails[0].cveDescription;
+            const params = [
+                scanId,
+                componentName,
+                currentVersion,
+                latestVersion,
+                status,
+                cveId || null,
+                cveDescription || null
+            ];
+            const insertQuery = `
+                INSERT INTO OutdatedComponents 
+                (scan_id, component_name, current_version, latest_version, status, cve_id, cve_description) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            `;
+            vulnerabilityInsertPromises.push(pool.query(insertQuery, params));
         });
 
-        const sqliInsertPromises = parsedData.sqliVulnerabilities.map(async (vulnerability) => {
-    try {
-        const { payload, url, type } = vulnerability;
+        for (const vulnerability of parsedData.sqliVulnerabilities) {
+    const { payload, url, type } = vulnerability;
 
-        if (payload && url && type) {
+    if (payload && url && type) {
+        await new Promise((resolve, reject) => {
             const insertQuery = `
                 INSERT INTO Vulnerabilities 
                 (scan_id, vulnerability_type, payload, action, method, sqlitype, Inputs, url) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `;
 
-            await pool.query(insertQuery, [
-                scanId,
-                "SQLI",
-                payload,
-                null,  // Since SQLI vulnerabilities may not have action or method
-                null,
-                type,
-                null,  // Inputs can be null for SQLI
-                url
-            ]);
+            pool.query(
+                insertQuery,
+                [scanId, "SQLI", payload, null, null, type, null, url],
+                (error, results, fields) => {
+                    if (error) {
+                        console.error('Error inserting SQLI vulnerability:', error);
+                        reject(error);
+                    } else {
+                        console.log('SQLI vulnerability inserted successfully.');
+                        resolve();
+                    }
+                }
+            );
+        });
+    } else {
+        console.error('Error: Missing required properties in SQLI vulnerability data.');
+    }
+}
+        // Insert crypto ciphers into 'CryptoCiphers' table
+for (const cipher of parsedData.cryptoCiphers) {
+    await new Promise((resolve, reject) => {
+        const insertQuery = `
+            INSERT INTO CryptoCiphers (scan_id, cipher_name, cipher_score) 
+            VALUES (?, ?, ?)
+        `;
 
-            console.log('SQLI vulnerability inserted successfully.');
-        } else {
-            console.error('Error: Missing required properties in SQLI vulnerability data.');
-        }
+        pool.query(
+            insertQuery,
+            [scanId, cipher.cipherName, cipher.cipherScore],
+            (error, results, fields) => {
+                if (error) {
+                    console.error('Error inserting CryptoCiphers data:', error);
+                    reject(error);
+                } else {
+                    console.log('Crypto cipher inserted successfully.');
+                    resolve();
+                }
+            }
+        );
+    });
+}
+const reportInsertResult = await new Promise((resolve, reject) => {
+            pool.query(
+                'INSERT INTO Reports (user_id, scan_id, report) VALUES (?, ?, ?)',
+                [userId, scanId, reportFilePath],
+                (error, results, fields) => {
+                    if (error) {
+                        console.error('Error inserting data into Reports table:', error);
+                        reject(error);
+                    } else {
+                        console.log('Report file inserted successfully into Reports table.');
+                        resolve(results.insertId);
+                        fs.unlink(reportFilePath, (err) => {
+            if (err) {
+                console.error('Error deleting report file:', err);
+            } else {
+                console.log('Report file deleted successfully.');
+            }
+        });
+                    }
+                }
+            );
+        });
+
+
+        // Wait for all vulnerability insertions to complete
+        await Promise.all(vulnerabilityInsertPromises);
+
+         console.log('All audit data inserted successfully.');
+
     } catch (error) {
-        console.error('Error inserting SQLI vulnerability:', error);
-        // Rethrow the error to propagate it, or handle it as needed
+        console.error('Error saving audit data:', error);
         throw error;
     }
-});
+}
 
-
-          const cryptoCiphersInsertPromises = parsedData.cryptoCiphers.map(async (cipher) => {
-              try {
-                  await pool.query(
-                      'INSERT INTO CryptoCiphers (scan_id, cipher_name, cipher_score) VALUES (?, ?, ?)',
-                      [scanId, cipher.cipherName, cipher.cipherScore]
-                  );
-              }catch (error) {
-                  console.error('Error inserting CryptoCiphers data.');
-              }
-          })
-        try {
-    await Promise.all([
-        ...vulnerabilitiesInsertPromises,
-        ...sqliInsertPromises,
-        ...cryptoCiphersInsertPromises
-    ]);
-    console.log('All vulnerabilities inserted successfully.');
-} catch (error) {
-    console.error('Error inserting vulnerability data:', error);
-}
-}
-catch (error){
-    console.log("Error inserting vulnerability data:", error);
-    }
-}
         app.get('/totalscans', requireLogin, (req, res) => {
     const query = 'SELECT COUNT(*) AS totalScans FROM Scans';
 
@@ -744,7 +792,7 @@ catch (error){
 
         const totalScans = result[0].totalScans;
         console.log("Total Scans: " + totalScans)
-        res.json({ totalScans });
+        res.json({ totalScans});
     });
 });
 

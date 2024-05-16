@@ -333,3 +333,188 @@ DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref
 DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
 DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "POST / HTTP/1.1" 302 172
 DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+ERROR:root:Traceback (most recent call last):
+  File "C:\Users\hcparlayan\WebstormProjects\OWASP-Top-Scanner3\main.py", line 118, in main
+    report = JSONReportGenerator(arguments.url)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: JSONReportGenerator() takes no arguments
+
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+ERROR:root:Traceback (most recent call last):
+  File "C:\Users\hcparlayan\WebstormProjects\OWASP-Top-Scanner3\main.py", line 140, in main
+    pdf_report = PDFReportGenerator(os.path.join('reports', f"{json_report.filename}.json"))
+                 ^^^^^^^^^^^^^^^^^^
+NameError: name 'PDFReportGenerator' is not defined. Did you mean: 'JSONReportGenerator'?
+
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+ERROR:root:Traceback (most recent call last):
+  File "C:\Users\hcparlayan\WebstormProjects\OWASP-Top-Scanner3\main.py", line 142, in main
+    pdf_report = PDFReportGenerator(os.path.join('reports', f"{json_report.filename}.json"))
+                                    ^^
+NameError: name 'os' is not defined. Did you forget to import 'os'
+
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+ERROR:root:Traceback (most recent call last):
+  File "C:\Users\hcparlayan\WebstormProjects\OWASP-Top-Scanner3\main.py", line 143, in main
+    pdf_report = PDFReportGenerator(os.path.join('reports', f"{json_report.filename}.json"))
+                                                               ^^^^^^^^^^^
+NameError: name 'json_report' is not defined
+
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+ERROR:root:Traceback (most recent call last):
+  File "C:\Users\hcparlayan\WebstormProjects\OWASP-Top-Scanner3\main.py", line 143, in main
+    pdf_report = PDFReportGenerator(os.path.join('reports', f"{report.filename}.json"))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PDFReportGenerator() takes no arguments
+
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): jetsms.net:80
+DEBUG:urllib3.connectionpool:http://jetsms.net:80 "GET / HTTP/1.1" 301 145
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): www.jetsms.net:80
+DEBUG:urllib3.connectionpool:http://www.jetsms.net:80 "GET / HTTP/1.1" 200 203622
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): www.jetsms.net:443
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET / HTTP/1.1" 302 172
+DEBUG:urllib3.connectionpool:https://www.jetsms.net:443 "GET /auth/index.php?ref=default HTTP/1.1" 200 14451
+WARNING:dotenv.main:Python-dotenv could not parse statement starting at line 10

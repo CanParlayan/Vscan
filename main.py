@@ -1,16 +1,19 @@
 import argparse
 import requests
 import sys
+import os
 import logging
 from urllib.error import URLError
 from VulnerabilityScanner.enum import CommonPortsCheck
 from VulnerabilityScanner.components.Crawler import Crawler
-from VulnerabilityScanner.components.ReportGenerator import ReportGenerator
+from VulnerabilityScanner.components.JSONReportGenerator import JSONReportGenerator
 from VulnerabilityScanner.SecurityHeaders import SecurityHeaders
 from VulnerabilityScanner.XssScanner import XssScanner
 from VulnerabilityScanner.outdated import Outdated
 from VulnerabilityScanner.sqli import singlescan
-from VulnerabilityScanner.crypto import *
+from VulnerabilityScanner.components.PDFReportGenerator import PDFReportGenerator
+
+from VulnerabilityScanner.crypto import testConnection
 from VulnerabilityScanner.components.terminalColors import TerminalColors
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -115,7 +118,8 @@ def main():
 
         url = arguments.url.rstrip('/')  # Remove trailing slash if present
         max_depth = arguments.depth if arguments.depth else 3
-        report = ReportGenerator(url)
+        report = JSONReportGenerator(arguments.url)
+
 
         print("Crawling...")
         urls = Crawler.deep_crawl(url, max_depth=max_depth)
@@ -136,6 +140,8 @@ def main():
         print(f"URL: {url}")
         print(f"Arguments: {arguments}")
         print(f"Scan Types: {scan_types}")
+        pdf_report = PDFReportGenerator(os.path.join('reports', f"{report.filename}.json"))
+        pdf_report.generate_pdf_report()
 
     except Exception as e:
         print(f"Error encountered: {e}")
@@ -143,7 +149,5 @@ def main():
         logging.error(traceback.format_exc())
         traceback.print_exc()  # Print full traceback for detailed error information
         exit(1)  # Exit with a non-zero status code to indicate failure
-
-
 if __name__ == '__main__':
     main()
