@@ -20,9 +20,19 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
 def perform_http_request(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    return response
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response
+    except requests.exceptions.HTTPError as http_err:
+        logging.error(f"HTTP error occurred: {http_err}")  # Log the error
+        print(f"HTTP error occurred: {http_err}")  # Optionally print the error
+        return None  # Or handle it as appropriate for your application
+    except Exception as err:
+        logging.error(f"Other error occurred: {err}")  # Log other errors
+        print(f"Other error occurred: {err}")  # Optionally print the error
+        return None  # Or handle it as appropriate for your application
+
 
 
 def perform_scans(quiet, givenurl, urls, xsspayload, nohttps, sqlipayloads, scan_types, report):
@@ -31,6 +41,10 @@ def perform_scans(quiet, givenurl, urls, xsspayload, nohttps, sqlipayloads, scan
 
     try:
         response = perform_http_request(givenurl)
+        if response is None:
+            print(f"Error: Unable to fetch {givenurl}")
+            return
+
         if response.status_code != 200:
             print(f"Error: HTTP {response.status_code}")
             return
@@ -52,6 +66,7 @@ def perform_scans(quiet, givenurl, urls, xsspayload, nohttps, sqlipayloads, scan
     except (requests.exceptions.RequestException, URLError) as e:
         print(f"{TerminalColors.FAIL}Connection to {givenurl} could not be established, error: {e}{TerminalColors.ENDC}")
         exit()
+
 
 
 def run_crypto_scans(urls, report):

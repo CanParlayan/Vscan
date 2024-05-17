@@ -167,9 +167,6 @@ function requireLogin(req, res, next) {
   }
 }
 
-
-
-
 app.post('/start-scan', requireLogin, async (req, res) => {
     const userId = req.cookies.userId;
     const { url, quiet, depth, xsspayload, nohttps, sqlipayload, scan_types } = req.body;
@@ -179,12 +176,9 @@ app.post('/start-scan', requireLogin, async (req, res) => {
     const startDate = new Date();
     const formattedStartDate = formatDate(startDate);
     console.log('Scan started at:', formattedStartDate);
-    const filename = "report_"+formattedStartDate+".json"
-    const pdffilename = "report_"+formattedStartDate+".pdf"
-    const pythonPath = 'C:\\Users\\hcparlayan\\AppData\\Local\\Programs\\Python\\Python312\\python';  //will be added to .env
-            const scriptPath = 'C:\\Users\\hcparlayan\\WebstormProjects\\OWASP-Top-Scanner3\\main.py'; //will be added to .env
 
-
+    const pythonPath = process.env.python_path;
+    const scriptPath = process.env.SCRIPT_PATH;
     const args = [
         '--url', url,
         quiet && '-q',
@@ -195,83 +189,62 @@ app.post('/start-scan', requireLogin, async (req, res) => {
         scan_types && '--scan-type', scan_types
     ].filter(Boolean);
 
-    try {
+    const pythonProcess = spawn(pythonPath, [scriptPath, ...args]);
+    console.log("Scan started officially");
+    pythonProcess.stdout.on('data', (data) => {
+        console.log('Python output:', data.toString().trim());
+    });
 
-        const pythonProcess = spawn(pythonPath, [scriptPath, ...args]);
-        console.log("Scan started officially")
-        pythonProcess.stdout.on('data', (data) => {
-            const output = data.toString().trim();
-            console.log('Python output:', output);
+    pythonProcess.on('close', async (code) => {
+        console.log('Python process exited with code:', code);
+        const reports_path = process.env.REPORTS_PATH;
 
-            output.split('\n').forEach((line) => {
-                wss.clients.forEach((client) => {
-                    if (client.readyState === WebSocket.OPEN) {
-                        client.send(JSON.stringify({type: 'scan_output', message: line}));
-                    }
-                });
-            });
-        });
-
-        pythonProcess.stderr.on('data', (data) => {
-            const errorOutput = data.toString().trim();
-            console.error('Python error:', errorOutput);
-        });
-        pythonProcess.on('close', async (code) => { // Make the callback async
-            console.log('Python process exited with code:', code);
-            const message = code === 0 ? 'Scan completed successfully' : `Scan failed with exit code ${code}`;
-
-            wss.clients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({type: 'scan_output', message}));
-                }
-            });
-
-            if (code === 0) {
-                res.json({message: 'Scan completed successfully'});
-                try {
-                    reports_path = "C:\\Users\\hcparlayan\\WebstormProjects\\OWASP-Top-Scanner3\\reports\\"
-                    const parsedData = parsedAuditData(reports_path + filename);
-                    const pdf = reports_path + pdffilename;
-                    await saveAuditDataToDatabase(parsedData, userId,pdf);
-                } catch (error) {
-        console.error('Error starting scan:', error);
-    }
+        try {
+            const parsedData = await tryLoadReport(reports_path, startDate);
+            const pdffilename = "report_" + formatDate(startDate) + ".pdf";
+            const pdfPath = reports_path + pdffilename;
+            await saveAuditDataToDatabase(parsedData, userId, pdfPath);
+            res.json({ message: 'Scan completed successfully' });
+        } catch (error) {
+            console.error('Error processing report:', error);
+            res.status(500).json({ error: 'Failed to process report' });
+        }
+    });
 });
-        })
-    }catch (error){
-        console.error('Error starting scan:', error.message);
-    }
-});
-function formatDate(date) {
+
+
+
+function formatDate(date, minuteOffset = 0) {
     const year = date.getFullYear();
     const month = ('0' + (date.getMonth() + 1)).slice(-2);
     const day = ('0' + date.getDate()).slice(-2);
     const hours = ('0' + date.getHours()).slice(-2);
-    const minutes = ('0' + date.getMinutes()).slice(-2);
+    const minutes = ('0' + (date.getMinutes() + minuteOffset)).slice(-2);
 
     return `${year}${month}${day}-${hours}${minutes}`;
 }
+
+async function tryLoadReport(reportsPath, baseDate) {
+    const filenames = [
+        "report_" + formatDate(baseDate) + ".json",
+        "report_" + formatDate(baseDate, 1) + ".json"
+    ];
+
+    for (const filename of filenames) {
+        const filePath = reportsPath + filename;
+        if (fs.existsSync(filePath)) {
+            const data = parsedAuditData(filePath);
+            fs.unlinkSync(filePath);  // Delete the file after loading
+            return data;
+        }
+    }
+    throw new Error('Report file not found for the given time.');
+}
+
+
 function timeCheck(timestamp){
     console.log('Time Check:', timestamp);
 }
-// Endpoint to check if user is authenticated
-app.get('/db', async (req, res) => {
-    const userId = 1 // Assuming you have user data stored in the request
-    const reports_path = "C:\\Users\\hcparlayan\\WebstormProjects\\OWASP-Top-Scanner3\\reports\\";
-    const filename = "report_20240516-2220.json";
-
-    console.log(reports_path + filename);
-
-    try {
-        const parsedData = parsedAuditData(reports_path + filename);
-        console.log(parsedData);
-        console.log("Saving Data");
-        await saveAuditDataToDatabase(parsedData, userId);
-        } catch (error) {
-        console.error('Error starting scan:', error);
-        res.status(500).json({ error: 'Scan process failed' }); // Handle errors gracefully
-    }
-});
 
 
 app.post('/login', async (req, res) => {
@@ -605,21 +578,31 @@ if (!userExists) {
 
         // Insert SSL certificate data into 'SSLCertificates' table
 // Insert SSL certificate data into 'SSLCertificates' table
-        await new Promise((resolve, reject) => {
-            pool.query(
-                'INSERT INTO SSLCertificates (site_id, issuer, valid_until) VALUES (?, ?, ?)',
-                [scanId, parsedData.sslCertIssuer, parsedData.sslCertDate],
-                (error, results, fields) => {
-                    if (error) {
-                        console.error('Error inserting SSL certificate data:', error);
-                        reject(error);
-                    } else {
-                        console.log('SSL certificate data inserted successfully.');
-                        resolve();
+// Assuming parsedData is the object containing the SSL certificate data
+
+// Check if the SSL certificate issuer and date are present
+        if (parsedData.sslCertIssuer && parsedData.sslCertDate) {
+            await new Promise((resolve, reject) => {
+                pool.query(
+                    'INSERT INTO SSLCertificates (site_id, issuer, valid_until) VALUES (?, ?, ?)',
+                    [scanId, parsedData.sslCertIssuer, parsedData.sslCertDate],
+                    (error, results, fields) => {
+                        if (error) {
+                            console.error('Error inserting SSL certificate data:', error);
+                            reject(error); // Log and reject the error
+                        } else {
+                            console.log('SSL certificate data inserted successfully.');
+                            resolve();
+                        }
                     }
-                }
-            );
-        });
+                );
+            }).catch(error => {
+                // Handle the error gracefully here if needed
+                console.error('Failed to insert SSL data:', error);
+            });
+        } else {
+            console.log('No SSL certificate data available, skipping database insertion.');
+        }
 
         // Insert headers data into 'Headers' table
         // Iterate over keys of headerCheckResults object
@@ -646,7 +629,7 @@ for (const headerName in parsedData.headerCheckResults) {
         // Insert XSS vulnerabilities into 'Vulnerabilities' table
         for (const vulnerability of parsedData.xssVulnerabilities) {
             const {payload, action, method, inputs, url} = vulnerability;
-            if (payload && action && method && url) {
+            if (payload || action || method || url) {
                 await new Promise((resolve, reject) => {
                     pool.query(
                         'INSERT INTO Vulnerabilities (scan_id, vulnerability_type, payload, action, method, sqlitype, Inputs, url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
@@ -738,29 +721,53 @@ for (const cipher of parsedData.cryptoCiphers) {
         );
     });
 }
-const reportInsertResult = await new Promise((resolve, reject) => {
-            pool.query(
-                'INSERT INTO Reports (user_id, scan_id, report) VALUES (?, ?, ?)',
-                [userId, scanId, reportFilePath],
-                (error, results, fields) => {
-                    if (error) {
-                        console.error('Error inserting data into Reports table:', error);
-                        reject(error);
-                    } else {
-                        console.log('Report file inserted successfully into Reports table.');
-                        resolve(results.insertId);
-                        fs.unlink(reportFilePath, (err) => {
-            if (err) {
-                console.error('Error deleting report file:', err);
-            } else {
-                console.log('Report file deleted successfully.');
-            }
-        });
-                    }
-                }
-            );
-        });
+const fs = require('fs');
+const path = require('path');
 
+// Additional logging to check the report file path
+console.log(`Report file path: ${reportFilePath}`);
+
+// Check if the file exists and is a .pdf
+if (fs.existsSync(reportFilePath)) {
+    const fileExtension = path.extname(reportFilePath);
+    if (fileExtension !== '.pdf') {
+        console.error(`Error: Report file is not a PDF. Found: ${fileExtension}`);
+        return;
+    }
+} else {
+    console.error('Error: Report file does not exist.');
+    return;
+}
+
+// Read the file as a BLOB
+fs.readFile(reportFilePath, (err, reportContent) => {
+    if (err) {
+        console.error('Error reading report file:', err);
+        return;
+    }
+
+    pool.query(
+        'INSERT INTO Reports (user_id, scan_id, report) VALUES (?, ?, ?)',
+        [userId, scanId, reportContent],
+        (error, results, fields) => {
+            if (error) {
+                console.error('Error inserting data into Reports table:', error);
+                return;
+            } else {
+                console.log('Report file inserted successfully into Reports table.');
+
+                // Delete the report file after insertion
+                fs.unlink(reportFilePath, (err) => {
+                    if (err) {
+                        console.error('Error deleting report file:', err);
+                    } else {
+                        console.log('Report file deleted successfully.');
+                    }
+                });
+            }
+        }
+    );
+});
 
         // Wait for all vulnerability insertions to complete
         await Promise.all(vulnerabilityInsertPromises);
@@ -773,10 +780,11 @@ const reportInsertResult = await new Promise((resolve, reject) => {
     }
 }
 
-        app.get('/totalscans', requireLogin, (req, res) => {
-    const query = 'SELECT COUNT(*) AS totalScans FROM Scans';
+app.get('/totalscans', requireLogin, (req, res) => {
+    const userId = getCurrentUserId(req); // Get the current user's ID
+    const query = 'SELECT COUNT(*) AS totalScans FROM Scans WHERE user_id = ?'; // Update the query to use a placeholder
 
-    pool.query(query, (err, result) => {
+    pool.query(query, [userId], (err, result) => { // Pass userId as a parameter to the query
         if (err) {
             console.error('Error querying total scans:', err);
             res.status(500).json({ error: 'Internal server error' });
@@ -784,22 +792,61 @@ const reportInsertResult = await new Promise((resolve, reject) => {
         }
 
         // Check if result is empty or undefined
-        if (!result || !result[0] || !result[0].totalScans) {
+        if (!result || !result[0] || !result[0].totalScans && result[0].totalScans !== 0) {
             console.error('No total scans found in the result');
             res.status(404).json({ error: 'Total scans not found' });
             return;
         }
 
         const totalScans = result[0].totalScans;
-        console.log("Total Scans: " + totalScans)
-        res.json({ totalScans});
+        console.log("Total Scans: " + totalScans);
+        res.json({ totalScans });
+    });
+});
+app.get('/vulnerabilityCounts', requireLogin, (req, res) => {
+    const userId = getCurrentUserId(req); // Get the current user's ID from the request
+    const query = `
+        SELECT
+            SUM(CASE WHEN vulnerability_type = 'XSS' THEN 1 ELSE 0 END) AS xssCount,
+            SUM(CASE WHEN vulnerability_type = 'SQLI' THEN 1 ELSE 0 END) AS sqliCount
+        FROM Vulnerabilities v
+        JOIN Scans s ON v.scan_id = s.scan_id
+        WHERE s.user_id = ?
+    `; // Join Vulnerabilities and Scans tables and filter by user_id
+
+    pool.query(query, [userId], (err, result) => { // Pass userId as a parameter to the query
+        if (err) {
+            console.error('Error querying vulnerability counts:', err);
+            res.status(500).json({ error: 'Internal server error' });
+            return;
+        }
+
+        // Check if result is empty or undefined
+        if (!result || !result[0]) {
+            console.error('No vulnerability counts found in the result');
+            res.status(404).json({ error: 'Vulnerability counts not found' });
+            return;
+        }
+
+        const xssCount = result[0].xssCount || 0;
+        const sqliCount = result[0].sqliCount || 0;
+        console.log("XSS Count: " + xssCount);
+        console.log("SQLI Count: " + sqliCount);
+        res.json({ xssCount, sqliCount });
     });
 });
 
-        app.get('/totalvulnerabilities', requireLogin, (req, res) => {
-    const query = 'SELECT COUNT(*) AS totalVulnerabilities FROM Vulnerabilities';
 
-    pool.query(query, (err, result) => {
+app.get('/totalvulnerabilities', requireLogin, (req, res) => {
+    const userId = getCurrentUserId(req); // Get the current user's ID from the request
+    const query = `
+        SELECT COUNT(*) AS totalVulnerabilities
+        FROM Vulnerabilities v
+        JOIN Scans s ON v.scan_id = s.scan_id
+        WHERE s.user_id = ?
+    `; 
+
+    pool.query(query, [userId], (err, result) => { // Pass userId as a parameter to the query
         if (err) {
             console.error('Error querying total vulnerabilities:', err);
             res.status(500).json({ error: 'Internal server error' });
@@ -807,17 +854,115 @@ const reportInsertResult = await new Promise((resolve, reject) => {
         }
 
         // Check if result is empty or undefined
-        if (!result || !result[0] || !result[0].totalVulnerabilities) {
+        if (!result || !result[0] || result[0].totalVulnerabilities === undefined || result[0].totalVulnerabilities === null) {
             console.error('No total vulnerabilities found in the result');
             res.status(404).json({ error: 'Total vulnerabilities not found' });
             return;
         }
 
         const totalVulnerabilities = result[0].totalVulnerabilities;
-        console.log("Total Vulnerabilities: " + totalVulnerabilities)
+        console.log("Total Vulnerabilities: " + totalVulnerabilities);
         res.json({ totalVulnerabilities });
     });
 });
+
+
+app.get('/download-report/:scanId', async (req, res) => {
+    const userId = getCurrentUserId(req);
+    const { scanId } = req.params;
+  
+    if (!userId) {
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
+  
+    try {
+      const reportData = await new Promise((resolve, reject) => {
+        pool.query(
+          'SELECT Reports.report ' +
+          'FROM Reports ' +
+          'INNER JOIN Scans ON Reports.scan_id = Scans.scan_id ' +
+          'WHERE Reports.scan_id = ? AND Scans.user_id = ?',
+          [scanId, userId],
+          (error, results) => {
+            if (error) {
+              return reject(error);
+            }
+            if (results.length === 0) {
+              return reject(new Error('No report found for this scan ID or unauthorized access.'));
+            }
+            resolve(results[0].report);
+          }
+        );
+      });
+  
+      // Set the content type and disposition header for PDF download
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'attachment; filename=report.pdf');
+  
+      // Send the report file content
+      res.send(reportData);
+    } catch (error) {
+      console.error('Error downloading report:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+app.get('/scanned-websites', async (req, res) => {
+    const userId = getCurrentUserId(req);
+    if (!userId) {
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
+  
+    try {
+      const scannedSites = await new Promise((resolve, reject) => {
+        pool.query(
+          'SELECT Scans.scan_id, Scans.target_url, Scans.scan_timestamp, Reports.report ' +
+          'FROM Scans ' +
+          'LEFT JOIN Reports ON Scans.scan_id = Reports.scan_id ' +
+          'WHERE Scans.user_id = ?',
+          [userId],
+          (error, results) => {
+            if (error) {
+              return reject(error);
+            }
+            resolve(results);
+          }
+        );
+      });
+  
+      res.json({ scannedSites });
+    } catch (error) {
+      console.error('Error retrieving scanned websites:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
+
+app.get('/username', async (req, res) => {
+  const userId = getCurrentUserId(req);
+
+  try {
+    const [rows] = await pool.query('SELECT username FROM Users WHERE user_Id = ?', [userId]);
+
+    if (rows.length === 0) {
+      return res.status(404).send('User not found');
+    }
+
+    const username = rows[0].username;
+    res.json({ username });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).send('Internal server error');
+  }
+});
+
+function getCurrentUserId(req) {
+    const userId = req.cookies.userId
+    if (userId) {
+        return userId;
+    }
+    return null;
+}
 
 
         app.all('*', (req, res) => {

@@ -27,6 +27,7 @@ yarn-error.log*
 .env*.local
 
 /.venv
+/venv
 
 # vercel
 .vercel
@@ -38,6 +39,8 @@ next-env.d.ts
 /..vscode
 /.idea
 /.reports
+/reports
+scanner.log
 
 /.VulnerabilityScanner/.__pycache__
 /.VulnerabilityScanner/.src/.__pycache__
