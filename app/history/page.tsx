@@ -40,7 +40,8 @@ const History = () => {
       .then((response) => {
         const { scannedSites } = response.data;
         if (scannedSites.length > 0) {
-          setLastScannedWebsites(scannedSites);
+          const reversedSites = scannedSites.reverse(); // Reverse the array
+          setLastScannedWebsites(reversedSites); // Set the reversed array in state
         }
       })
       .catch((error) => {

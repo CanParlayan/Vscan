@@ -938,22 +938,30 @@ app.get('/scanned-websites', async (req, res) => {
   });
   
 
-app.get('/username', async (req, res) => {
-  const userId = getCurrentUserId(req);
+  app.get('/username', async (req, res) => {
+    try {
+        const userId = getCurrentUserId(req);
 
-  try {
-    const [rows] = await pool.query('SELECT username FROM Users WHERE user_Id = ?', [userId]);
+        // Fetch the username from the database using the user ID
+          pool.query('SELECT username FROM Users WHERE user_id = ?', [userId], (error, results, fields) => {
+            if (error) {
+                console.error("Error fetching username:", error);
+                return res.status(500).json({ error: "An error occurred while fetching the username." });
+            }
 
-    if (rows.length === 0) {
-      return res.status(404).send('User not found');
+            // Check if a user with the given ID exists
+            if (results.length === 0) {
+                return res.status(404).json({ error: "User not found." });
+            }
+
+            // User found, send the username in the response
+            res.json({ username: results[0].username });
+        });
+
+    } catch (error) {
+        console.error("Error fetching username:", error);
+        res.status(500).json({ error: "An error occurred while fetching the username." });
     }
-
-    const username = rows[0].username;
-    res.json({ username });
-  } catch (error) {
-    console.error('Error fetching user:', error);
-    res.status(500).send('Internal server error');
-  }
 });
 
 function getCurrentUserId(req) {

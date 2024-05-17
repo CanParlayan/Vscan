@@ -10,7 +10,8 @@
   font-size: 1.5rem;
   color: #333;
   margin-bottom: 10px;
-  border-bottom: #202c2d;
+  border-bottom: 1px solid #202c2d;
+  padding-bottom: 5px;
 }
 
 .last-scanned-item {
@@ -32,15 +33,95 @@
   border-bottom: none;
 }
 
+.url {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 10px;
+  color: #202c2d;
+}
+
 .date {
   font-style: italic;
   color: #202c2d;
+  flex-shrink: 0;
+  margin-right: 400px;
 }
 
 .pdf-link {
   color: #202c2d;
   text-decoration: none;
   font-weight: bold;
+  .history {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+  }
+
+  .title {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #202c2d;
+    padding-bottom: 5px;
+  }
+
+  .last-scanned-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #a4adca70;
+    border-radius: 8px;
+  }
+
+  .last-scanned-item:hover {
+    background: #a4adca60;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+  }
+
+  .last-scanned-item:last-child {
+    border-bottom: none;
+  }
+
+  .url {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 10px;
+    color: #202c2d;
+  }
+
+  .date {
+    flex-shrink: 0;
+    margin-right: 10px;
+    margin-left: 10px;
+    text-align: center;
+    color: #202c2d;
+    width: 150px; /* Adjust width as needed */
+  }
+
+  .pdf-link {
+    color: #202c2d;
+    text-decoration: none;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  .pdf-link:hover {
+    text-decoration: underline;
+  }
+
+  .fas.fa-image {
+    margin-right: 5px;
+  }
+
+  flex-shrink: 0;
 }
 
 .pdf-link:hover {
