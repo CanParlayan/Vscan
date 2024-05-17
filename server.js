@@ -869,12 +869,15 @@ app.get('/totalvulnerabilities', requireLogin, (req, res) => {
 
 app.get('/download-report/:scanId', async (req, res) => {
     const userId = getCurrentUserId(req);
-    const { scanId } = req.params;
-  
+    const scanId = req.params.scanId;
+
+
+    console.log(`Request received for scanId: ${scanId} by userId: ${userId}`);
+
     if (!userId) {
       return res.status(401).json({ error: 'User not authenticated' });
     }
-  
+
     try {
       const reportData = await new Promise((resolve, reject) => {
         pool.query(
@@ -885,22 +888,37 @@ app.get('/download-report/:scanId', async (req, res) => {
           [scanId, userId],
           (error, results) => {
             if (error) {
+              console.error('Database query error:', error);
               return reject(error);
             }
             if (results.length === 0) {
+              console.warn(`No report found or unauthorized access for scan ID: ${scanId} and user ID: ${userId}`);
               return reject(new Error('No report found for this scan ID or unauthorized access.'));
             }
+            console.log('Query results:', results);
             resolve(results[0].report);
           }
         );
       });
-  
+
+      if (!reportData) {
+        console.error('Report data is undefined or null');
+        throw new Error('Report data is undefined or null');
+      }
+
+      // Debugging: Log headers and data type
+      console.log('Headers set:');
+      console.log('Content-Type:', 'application/pdf');
+      console.log('Content-Disposition:', 'attachment; filename=report.pdf');
+      console.log('Report data type:', typeof reportData);
+      console.log('Report data length:', reportData.length);
+
       // Set the content type and disposition header for PDF download
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', 'attachment; filename=report.pdf');
-  
-      // Send the report file content
-      res.send(reportData);
+
+      // Send the report file content as a PDF
+      res.send(Buffer.from(reportData, 'binary'));
     } catch (error) {
       console.error('Error downloading report:', error);
       res.status(500).json({ error: 'Internal server error' });
@@ -930,13 +948,13 @@ app.get('/scanned-websites', async (req, res) => {
         );
       });
   
-      res.json({ scannedSites });
+      res.json({ scannedSites }); // Include scanId in the response
     } catch (error) {
       console.error('Error retrieving scanned websites:', error);
       res.status(500).json({ error: 'Internal server error' });
     }
-  });
-  
+});
+
 
   app.get('/username', async (req, res) => {
     try {

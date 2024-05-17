@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Chart, registerables } from "chart.js"; // Import Chart and registerables
+import { Chart, registerables } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import LastScannedWebsites from "./components/LastScannedWebsites";
 import Logo from "./components/logo";
@@ -9,7 +9,7 @@ import "./homestyle.css";
 import "./components/LastScannedWebsitescss.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
-Chart.register(...registerables); // Register Chart.js components
+Chart.register(...registerables);
 
 export default function Home() {
   const [totalScans, setTotalScans] = useState(0);
@@ -17,14 +17,12 @@ export default function Home() {
   const [xsstotal, setxsstotal] = useState(0);
   const [sqlitotal, setsqlitotal] = useState(0);
   const [username, setUsername] = useState(null);
-  const [latestScannedSite, setLatestScannedSite] = useState<any[] | null>(
-    null
-  );
+  const [latestScannedSite, setLatestScannedSite] = useState<any[] | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
+
 
   useEffect(() => {
-    // Check authentication status
     const checkAuthStatus = async () => {
       try {
         const response = await axios.get("/check-auth");
@@ -39,14 +37,17 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // Fetch latest scanned website
-    axios
-      .get("/scanned-websites")
+    axios.get("/scanned-websites")
       .then((response) => {
+        console.log(response)
         const { scannedSites } = response.data;
         if (scannedSites.length > 0) {
-          const reversedSites = scannedSites.reverse(); // Reverse the array
-          setLatestScannedSite(reversedSites); // Set the reversed array in state
+          const updatedSites = scannedSites.map((site: any) => ({
+  ...site,
+  pdfLink: `/download-report/${site.scan_id}` // Use scan_id instead of scanId
+}));
+
+          setLatestScannedSite(updatedSites.reverse()); // Reverse if needed
         }
       })
       .catch((error) => {
@@ -55,9 +56,7 @@ export default function Home() {
   }, [isLoggedIn]);
 
   useEffect(() => {
-    // Fetch total scans
-    axios
-      .get("/totalscans")
+    axios.get("/totalscans")
       .then((response) => {
         setTotalScans(response.data.totalScans);
       })
@@ -65,18 +64,15 @@ export default function Home() {
         console.error("Error fetching total scans:", error);
       });
 
-    // Fetch total vulnerabilities
-    axios
-      .get("/totalvulnerabilities")
+    axios.get("/totalvulnerabilities")
       .then((response) => {
         setTotalVulnerabilities(response.data.totalVulnerabilities);
       })
       .catch((error) => {
         console.error("Error fetching total vulnerabilities:", error);
       });
-    //XSS and SQLİ counts
-    axios
-      .get("/vulnerabilityCounts")
+
+    axios.get("/vulnerabilityCounts")
       .then((response) => {
         const { xssCount, sqliCount } = response.data;
         setxsstotal(xssCount);
@@ -86,9 +82,7 @@ export default function Home() {
         console.error("Error fetching vulnerability counts:", error);
       });
 
-    // Fetch username
-    axios
-      .get("/username")
+    axios.get("/username")
       .then((response) => {
         setUsername(response.data.username);
       })
@@ -99,15 +93,12 @@ export default function Home() {
 
   const handleLoginClick = () => {
     if (isLoggedIn) {
-      // Perform logout actions
-      setIsLoggedIn(false); // Set isLoggedIn to false
-      localStorage.removeItem("accessToken"); // Example of clearing access token from local storage
+      setIsLoggedIn(false);
+      localStorage.removeItem("accessToken");
     }
-    // Redirect to the login page regardless of login or logout action
     window.location.href = "/login";
   };
 
-  // Data for the bar chart
   const data = {
     labels: ["Total Scans", "Total Vulnerabilities", "XSS Total", "SQLi Total"],
     datasets: [
@@ -154,11 +145,7 @@ export default function Home() {
             </li>
             <li className="bottompart">
               <a href="#" onClick={handleLoginClick}>
-                <i
-                  className={`fas ${
-                    isLoggedIn ? "fa-sign-out-alt" : "fa-sign-in-alt"
-                  }`}
-                ></i>{" "}
+                <i className={`fas ${isLoggedIn ? "fa-sign-out-alt" : "fa-sign-in-alt"}`}></i>
                 {isLoggedIn ? "Logout" : "Login"}
               </a>
             </li>
@@ -184,9 +171,7 @@ export default function Home() {
           </div>
 
           <LastScannedWebsites
-            lastScannedWebsites={
-              latestScannedSite ? latestScannedSite.slice(0, 4) : []
-            }
+            lastScannedWebsites={latestScannedSite ? latestScannedSite.slice(0, 4) : []}
           />
         </div>
       </body>

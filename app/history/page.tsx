@@ -13,18 +13,11 @@ const History = () => {
   );
 
   useEffect(() => {
-    // Check authentication status when component mounts
     const checkAuthStatus = async () => {
       try {
-        axios
-          .get("/check-auth")
-          .then((response) => {
-            const { authenticated } = response.data;
-            setIsLoggedIn(authenticated);
-          })
-          .catch((error) => {
-            console.error("Error checking authentication status:", error);
-          });
+        const response = await axios.get("/check-auth");
+        const { authenticated } = response.data;
+        setIsLoggedIn(authenticated);
       } catch (error) {
         console.error("Error checking authentication status:", error);
       }
@@ -34,28 +27,34 @@ const History = () => {
   }, []);
 
   useEffect(() => {
-    // Fetch latest scanned website
-    axios
-      .get("/scanned-websites")
-      .then((response) => {
+    const fetchScannedWebsites = async () => {
+      try {
+        const response = await axios.get("/scanned-websites");
         const { scannedSites } = response.data;
         if (scannedSites.length > 0) {
-          const reversedSites = scannedSites.reverse(); // Reverse the array
-          setLastScannedWebsites(reversedSites); // Set the reversed array in state
+          const reversedSites = scannedSites.reverse();
+          // Map scanned websites to include pdfLink based on scan_id
+          const updatedSites = reversedSites.map((site: any) => ({
+            ...site,
+            pdfLink: `/download-report/${site.scan_id}`,
+          }));
+          setLastScannedWebsites(updatedSites);
         }
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching latest scanned website:", error);
-      });
+      }
+    };
+
+    fetchScannedWebsites();
   }, [isLoggedIn]);
 
   const handleLoginClick = () => {
     if (isLoggedIn) {
-      // Perform logout actions
       setIsLoggedIn(false);
-      localStorage.removeItem("accessToken"); // Clear stored token
-      window.location.href = "/login"; // Redirect to login page
+      localStorage.removeItem("accessToken");
+      window.location.href = "/login";
     } else {
+      // Handle login logic
     }
   };
 
@@ -81,13 +80,8 @@ const History = () => {
               </a>
             </li>
             <li className="bottompart">
-              {/* Render login or logout button based on isLoggedIn state */}
-              <a className="" href="#" onClick={handleLoginClick}>
-                <i
-                  className={`fas ${
-                    isLoggedIn ? "fa-sign-out-alt" : "fa-sign-in-alt"
-                  }`}
-                ></i>{" "}
+              <a href="#" onClick={handleLoginClick}>
+                <i className={`fas ${isLoggedIn ? "fa-sign-out-alt" : "fa-sign-in-alt"}`}></i>{" "}
                 {isLoggedIn ? "Logout" : "Login"}
               </a>
             </li>
@@ -96,9 +90,7 @@ const History = () => {
 
         <div className="main-content">
           <h1 className="main-text">This is the history page.</h1>
-          <LastScannedWebsites
-            lastScannedWebsites={lastScannedWebsites ? lastScannedWebsites : []}
-          />
+          <LastScannedWebsites lastScannedWebsites={lastScannedWebsites ? lastScannedWebsites : []} />
         </div>
       </body>
     </html>
