@@ -1,59 +1,85 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import LastScannedWebsites from "./components/LastScannedWebsites";
 import Logo from "./components/logo";
 import "./homestyle.css";
 import "./components/LastScannedWebsitescss.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
+ChartJS.register(ArcElement, Tooltip, Legend);
+
 export default function Home() {
   const [totalScans, setTotalScans] = useState(0);
+  const [username, setUsername] = useState(null);
   const [totalVulnerabilities, setTotalVulnerabilities] = useState(0);
-  const [latestScannedSite, setLatestScannedSite] = useState(null);
+  const [latestScannedSite, setLatestScannedSite] = useState<any[] | null>(
+    null
+  );
+
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
 
-  const lastScannedWebsites = [];
-useEffect(() => {
-  // Check authentication status
-  const checkAuthStatus = async () => {
-    try {
-      const response = await axios.get("/check-auth");
-      const { authenticated } = response.data;
-      setIsLoggedIn(authenticated);
-    } catch (error) {
-      console.error("Error checking authentication status:", error);
-    }
-  };
-
-  checkAuthStatus();
-}, []);
   useEffect(() => {
-    // Fetch total scans, vulnerabilities, and latest scanned site
-    const fetchDashboardData = async () => {
+    // Check authentication status
+    const checkAuthStatus = async () => {
       try {
-        const [
-          totalScansResponse,
-          totalVulnerabilitiesResponse,
-          latestScannedSiteResponse,
-        ] = await Promise.all([
-          axios.get("/audited-total-sites"),
-          axios.get("/total-vulnerabilities"),
-          axios.get("/latest-scanned-site"),
-        ]);
-
-        setTotalScans(totalScansResponse.data.totalSites);
-        setTotalVulnerabilities(
-          totalVulnerabilitiesResponse.data.totalVulnerabilities
-        );
-        setLatestScannedSite(latestScannedSiteResponse.data.latestScannedSite);
+        const response = await axios.get("/check-auth");
+        const { authenticated } = response.data;
+        setIsLoggedIn(authenticated);
       } catch (error) {
-        console.error("Error fetching dashboard data:", error);
+        console.error("Error checking authentication status:", error);
       }
     };
 
-    fetchDashboardData();
-  }, [isLoggedIn]); // Empty dependency array ensures useEffect runs only once
+    checkAuthStatus();
+  }, []);
+  useEffect(() => {
+    // Fetch latest scanned website
+    axios
+      .get("/scanned-websites")
+      .then((response) => {
+        const { scannedSites } = response.data;
+        if (scannedSites.length > 0) {
+          setLatestScannedSite(scannedSites);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching latest scanned website:", error);
+      });
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    // Fetch total scans
+    axios
+      .get("/totalscans")
+      .then((response) => {
+        setTotalScans(response.data.totalScans);
+      })
+      .catch((error) => {
+        console.error("Error fetching total scans:", error);
+      });
+
+    // Fetch total vulnerabilities
+    axios
+      .get("/totalvulnerabilities")
+      .then((response) => {
+        setTotalVulnerabilities(response.data.totalVulnerabilities);
+      })
+      .catch((error) => {
+        console.error("Error fetching total vulnerabilities:", error);
+      });
+    // Fetch username
+    axios
+      .get("/username")
+      .then((response) => {
+        setUsername(response.data.username);
+      })
+      .catch((error) => {
+        console.error("Error fetching username:", error);
+      });
+  }, [isLoggedIn]);
 
   const handleLoginClick = () => {
     if (isLoggedIn) {
@@ -63,6 +89,18 @@ useEffect(() => {
     }
     // Redirect to the login page regardless of login or logout action
     window.location.href = "/login";
+  };
+
+  const data = {
+    labels: ["Total Scans", "Total Vulnerabilities"],
+    datasets: [
+      {
+        label: "Scans and Vulnerabilities",
+        data: [totalScans, totalVulnerabilities],
+        backgroundColor: ["#9966FF", "#FF6384"],
+        hoverBackgroundColor: ["#36A2EB", "#FF6384"],
+      },
+    ],
   };
 
   return (
@@ -87,9 +125,12 @@ useEffect(() => {
               </a>
             </li>
             <li className="bottompart">
-              {/* Render login or logout button based on isLoggedIn state */}
               <a href="#" onClick={handleLoginClick}>
-                <i className={`fas ${isLoggedIn ? "fa-sign-out-alt" : "fa-sign-in-alt"}`}></i>{" "}
+                <i
+                  className={`fas ${
+                    isLoggedIn ? "fa-sign-out-alt" : "fa-sign-in-alt"
+                  }`}
+                ></i>{" "}
                 {isLoggedIn ? "Logout" : "Login"}
               </a>
             </li>
@@ -97,11 +138,11 @@ useEffect(() => {
         </nav>
 
         <div className="main-content">
-          <h1 className="main-text">Welcome back!</h1>
+          <h1 className="main-text">Welcome back! {username}</h1>
 
           <div className="info-container">
             <div className="graph">
-              <h1>GRAPH</h1>
+              <Pie data={data} />
             </div>
 
             <div className="card">
@@ -113,8 +154,11 @@ useEffect(() => {
               <h3 className="carddata">{totalVulnerabilities}</h3>
             </div>
           </div>
+
           <LastScannedWebsites
-            lastScannedWebsites={latestScannedSite ? [latestScannedSite] : []}
+            lastScannedWebsites={
+              latestScannedSite ? latestScannedSite.slice(-5) : []
+            }
           />
         </div>
       </body>

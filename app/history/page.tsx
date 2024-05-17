@@ -3,36 +3,50 @@ import React, { useEffect, useState } from "react";
 import Logo from "../components/logo";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import axios from "axios";
-
+import "./style.css";
+import LastScannedWebsites from "../components/LastScannedWebsites";
+import "../components/LastScannedWebsitescss.css";
 const History = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [lastScannedWebsites, setLastScannedWebsites] = useState([]);
-
-  // Function to fetch last scanned websites data
-  const fetchLastScannedWebsites = async () => {
-    try {
-      const response = await axios.get("http://localhost:8000/last-scanned");
-      setLastScannedWebsites(response.data);
-    } catch (error) {
-      console.error("Error fetching last scanned websites:", error);
-    }
-  };
+  const [lastScannedWebsites, setLastScannedWebsites] = useState<any[] | null>(
+    null
+  );
 
   useEffect(() => {
     // Check authentication status when component mounts
     const checkAuthStatus = async () => {
       try {
-        const response = await axios.get("/check-auth");
-        const { authenticated } = response.data;
-        setIsLoggedIn(authenticated);
+        axios
+          .get("/check-auth")
+          .then((response) => {
+            const { authenticated } = response.data;
+            setIsLoggedIn(authenticated);
+          })
+          .catch((error) => {
+            console.error("Error checking authentication status:", error);
+          });
       } catch (error) {
         console.error("Error checking authentication status:", error);
       }
     };
 
     checkAuthStatus();
-    fetchLastScannedWebsites();
   }, []);
+
+  useEffect(() => {
+    // Fetch latest scanned website
+    axios
+      .get("/scanned-websites")
+      .then((response) => {
+        const { scannedSites } = response.data;
+        if (scannedSites.length > 0) {
+          setLastScannedWebsites(scannedSites);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching latest scanned website:", error);
+      });
+  }, [isLoggedIn]);
 
   const handleLoginClick = () => {
     if (isLoggedIn) {
@@ -41,17 +55,8 @@ const History = () => {
       localStorage.removeItem("accessToken"); // Clear stored token
       window.location.href = "/login"; // Redirect to login page
     } else {
-      // Redirect to login page if not logged in
-      window.location.href = "/login";
     }
   };
-
-  // Redirect to login page if not logged in
-  useEffect(() => {
-    if (!isLoggedIn) {
-      window.location.href = "/login";
-    }
-  }, [isLoggedIn]);
 
   return (
     <html>
@@ -90,27 +95,9 @@ const History = () => {
 
         <div className="main-content">
           <h1 className="main-text">This is the history page.</h1>
-          <div className="history">
-            <h2 className="title">Last Scanned Websites</h2>
-            <div className="last-scanned-container">
-              <div className="last-scanned-list">
-                {lastScannedWebsites.map((website, index) => (
-                  <div key={index} className="last-scanned-item">
-                    <span>{website.name}</span>
-                    <span className="date">{website.date}</span>
-                    <a
-                      href={website.pdfLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="pdf-link"
-                    >
-                      <i className="fas fa-image"></i> PDF
-                    </a>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <LastScannedWebsites
+            lastScannedWebsites={lastScannedWebsites ? lastScannedWebsites : []}
+          />
         </div>
       </body>
     </html>
