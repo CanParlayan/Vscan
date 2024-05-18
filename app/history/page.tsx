@@ -81,7 +81,11 @@ const History = () => {
             </li>
             <li className="bottompart">
               <a href="#" onClick={handleLoginClick}>
-                <i className={`fas ${isLoggedIn ? "fa-sign-out-alt" : "fa-sign-in-alt"}`}></i>{" "}
+                <i
+                  className={`fas ${
+                    isLoggedIn ? "fa-sign-out-alt" : "fa-sign-in-alt"
+                  }`}
+                ></i>{" "}
                 {isLoggedIn ? "Logout" : "Login"}
               </a>
             </li>
@@ -90,7 +94,9 @@ const History = () => {
 
         <div className="main-content">
           <h1 className="main-text">This is the history page.</h1>
-          <LastScannedWebsites lastScannedWebsites={lastScannedWebsites ? lastScannedWebsites : []} />
+          <LastScannedWebsites
+            lastScannedWebsites={lastScannedWebsites ? lastScannedWebsites : []}
+          />
         </div>
       </body>
     </html>

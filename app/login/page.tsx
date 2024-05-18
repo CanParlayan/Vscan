@@ -11,38 +11,36 @@ const LoginPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State for login status
   // Event handler for email input change
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
-  setEmail(e.target.value);
-};
+    setEmail(e.target.value);
+  };
 
-
-const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
-  setPassword(e.target.value);
-};
-
+  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
 
   // Form submission handler
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  try {
-    const response = await fetch('/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
+    e.preventDefault();
+    try {
+      const response = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (data.success) {
-      setIsLoggedIn(true); // Set isLoggedIn to true upon successful login
-      window.location.href = '/'; // Redirect on successful login
-    } else {
-      setLoginError(data.message);
+      if (data.success) {
+        setIsLoggedIn(true); // Set isLoggedIn to true upon successful login
+        window.location.href = "/"; // Redirect on successful login
+      } else {
+        setLoginError(data.message);
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      // Handle error
     }
-  } catch (error) {
-    console.error('Error during login:', error);
-    // Handle error
-  }
-};
+  };
 
   // Render the login form
   return (
@@ -58,31 +56,32 @@ const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
             <div className="formGroup">
               <label htmlFor="email">Email</label>
               <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={email}
-                  onChange={handleEmailChange} // Assign the email input change handler
-                  placeholder="Enter your email"
-                  required
+                type="email"
+                id="email"
+                name="email"
+                value={email}
+                onChange={handleEmailChange} // Assign the email input change handler
+                placeholder="Enter your email"
+                required
               />
             </div>
             <div className="formGroup">
               <label htmlFor="password">Password</label>
               <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={password}
-                  onChange={handlePasswordChange} // Assign the password input change handler
-                  placeholder="Enter your password"
-                  required
+                type="password"
+                id="password"
+                name="password"
+                value={password}
+                onChange={handlePasswordChange} // Assign the password input change handler
+                placeholder="Enter your password"
+                required
               />
             </div>
             <button type="submit" className="button">
               Login
             </button>
-            {loginError && <p className="error">{loginError}</p>} {/* Display login error if exists */}
+            {loginError && <p className="error">{loginError}</p>}{" "}
+            {/* Display login error if exists */}
           </form>
         </div>
       </div>

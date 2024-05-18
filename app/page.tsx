@@ -17,10 +17,10 @@ export default function Home() {
   const [xsstotal, setxsstotal] = useState(0);
   const [sqlitotal, setsqlitotal] = useState(0);
   const [username, setUsername] = useState(null);
-  const [latestScannedSite, setLatestScannedSite] = useState<any[] | null>(null);
+  const [latestScannedSite, setLatestScannedSite] = useState<any[] | null>(
+    null
+  );
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -37,15 +37,16 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    axios.get("/scanned-websites")
+    axios
+      .get("/scanned-websites")
       .then((response) => {
-        console.log(response)
+        console.log(response);
         const { scannedSites } = response.data;
         if (scannedSites.length > 0) {
           const updatedSites = scannedSites.map((site: any) => ({
-  ...site,
-  pdfLink: `/download-report/${site.scan_id}` // Use scan_id instead of scanId
-}));
+            ...site,
+            pdfLink: `/download-report/${site.scan_id}`, // Use scan_id instead of scanId
+          }));
 
           setLatestScannedSite(updatedSites.reverse()); // Reverse if needed
         }
@@ -56,7 +57,8 @@ export default function Home() {
   }, [isLoggedIn]);
 
   useEffect(() => {
-    axios.get("/totalscans")
+    axios
+      .get("/totalscans")
       .then((response) => {
         setTotalScans(response.data.totalScans);
       })
@@ -64,7 +66,8 @@ export default function Home() {
         console.error("Error fetching total scans:", error);
       });
 
-    axios.get("/totalvulnerabilities")
+    axios
+      .get("/totalvulnerabilities")
       .then((response) => {
         setTotalVulnerabilities(response.data.totalVulnerabilities);
       })
@@ -72,7 +75,8 @@ export default function Home() {
         console.error("Error fetching total vulnerabilities:", error);
       });
 
-    axios.get("/vulnerabilityCounts")
+    axios
+      .get("/vulnerabilityCounts")
       .then((response) => {
         const { xssCount, sqliCount } = response.data;
         setxsstotal(xssCount);
@@ -82,7 +86,8 @@ export default function Home() {
         console.error("Error fetching vulnerability counts:", error);
       });
 
-    axios.get("/username")
+    axios
+      .get("/username")
       .then((response) => {
         setUsername(response.data.username);
       })
@@ -145,7 +150,11 @@ export default function Home() {
             </li>
             <li className="bottompart">
               <a href="#" onClick={handleLoginClick}>
-                <i className={`fas ${isLoggedIn ? "fa-sign-out-alt" : "fa-sign-in-alt"}`}></i>
+                <i
+                  className={`fas ${
+                    isLoggedIn ? "fa-sign-out-alt" : "fa-sign-in-alt"
+                  }`}
+                ></i>
                 {isLoggedIn ? "Logout" : "Login"}
               </a>
             </li>
@@ -171,7 +180,9 @@ export default function Home() {
           </div>
 
           <LastScannedWebsites
-            lastScannedWebsites={latestScannedSite ? latestScannedSite.slice(0, 4) : []}
+            lastScannedWebsites={
+              latestScannedSite ? latestScannedSite.slice(0, 4) : []
+            }
           />
         </div>
       </body>

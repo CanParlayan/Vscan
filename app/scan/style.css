@@ -117,6 +117,12 @@ body {
   background-color: #000000;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
 }
+.scan-output {
+  max-width: 800px; /* Adjust the value as needed */
+  overflow-x: auto; /* Enable horizontal scrolling if needed */
+  word-wrap: break-word; /* Wrap long words */
+  white-space: pre-wrap; /* Preserve line breaks */
+}
 
 /* Responsive adjustments for mobile devices */
 @media (max-width: 768px) {
